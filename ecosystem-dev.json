@@ -1,0 +1,28 @@
+{
+  "apps": [{
+    "name": "node",
+    "script": "app.js",
+    "instances": "1",
+    "exec_mode": "cluster",
+    "error_file": "err.log",
+    "out_file": "out.log",
+    "merge_logs": true,
+    "log_date_format": "DD-MM-YYYY HH:mm",
+    "env_production" : {
+      "NODE_ENV": "development"
+    },
+    "watch": ["app.js", "models", "middlewares", "helpers", "db", "controllers"],
+    "ignore_watch" : ["node_modules", "typings", "uploads"],
+    "watch_options": {
+      "followSymlinks": false,
+      "ignored": "*.ts",
+      "interval": 200,
+      "binaryInterval": 600,
+      "alwaysStat": false,
+      "awaitWriteFinish": {
+        "stabilityThreshold": 4000,
+        "pollInterval": 200
+      }
+    }
+  }]
+}

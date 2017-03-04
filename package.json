@@ -1,0 +1,51 @@
+{
+  "name": "Node",
+  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "keywords": [],
+  "homepage": "",
+  "license": "MIT",
+  "author": {
+    "name": "Arthur Osipenko",
+    "email": "arthur.osipenko@gmail.com",
+    "url": "https://github.com/G-MontaG"
+  },
+  "contributors": [],
+  "main": "server.js",
+  "engines": {
+    "node": ">=7.7.1",
+    "npm": ">=4.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+    "@types/node": "^7.0.5",
+    "body-parser": "^1.17.0",
+    "compression": "^1.6.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.0",
+    "lodash": "^4.17.4",
+    "moment": "^2.17.1",
+    "mongoose": "^4.8.5",
+    "pm2": "^2.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0",
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1",
+    "winston": "^2.3.1"
+  },
+  "scripts": {
+    "server": "nodemon --delay 2 --ext js app.js",
+    "dev-start": "pm2 start ecosystem-dev.json",
+    "dev-stop": "pm2 stop ecosystem-dev.json",
+    "dev-restart": "pm2 restart ecosystem-dev.json",
+    "dev-delete": "pm2 delete ecosystem-dev.json",
+    "list": "pm2 list",
+    "monit": "pm2 monit",
+    "kill": "pm2 kill"
+  }
+}
