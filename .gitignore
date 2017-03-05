@@ -48,5 +48,6 @@ sftp-config.json
 atlassian-ide-plugin.xml
 
 ### Project
+.env
 **/*.d.ts
 **/*.js
