@@ -1,0 +1,30 @@
+{
+  "name": "AngularJS-Modular-Demo",
+  "version": "0.0.1",
+  "description": "backend for mock services",
+  "authors": [
+    "John Papa"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/johnpapa/ng-demos",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnpapa/ng-demos.git"
+  },
+  "scripts": {
+    "init": "npm install",
+    "start": "node ./app.js",
+    "watch": "nodemon ./app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.8.2",
+    "compression": "^1.1.0",
+    "cors": "^2.2.0",
+    "express": "^4.9.3",
+    "method-override": "^1.0.0",
+    "morgan": "^1.1.1",
+    "rimraf": "^2.5.2",
+    "serve-favicon": "^2.3.0"
+  },
+  "devDependencies": {}
+}

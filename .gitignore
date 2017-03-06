@@ -51,3 +51,6 @@ atlassian-ide-plugin.xml
 .env
 **/*.d.ts
 **/*.js
+
+!swagger/backend/app.js
+swagger/public

@@ -7,17 +7,33 @@ import cookieParser = require('cookie-parser');
 import compress = require('compression');
 import helmet = require('helmet');
 import dotenv = require('dotenv');
-import multer = require('multer');
-import expressValidator = require('express-validator');
-const upload = multer({dest: path.join(__dirname, 'uploads')});
-
 dotenv.config({path: '.env'});
 
+import multer = require('multer');
+const upload = multer({dest: path.join(__dirname, 'uploads')});
+
+import expressValidator = require('express-validator');
+
 import './db';
+import { ServerMessage } from './helpers/serverMessage';
+import { apiRouter } from './controllers/index';
 
-const publicDir = path.join(__dirname, '../frontend/public');
+import swaggerJSDoc = require('swagger-jsdoc');
+const swaggerSpec = swaggerJSDoc({
+    swaggerDefinition: {
+        info: {
+            title: 'Node Swagger API',
+            version: '1.0.0',
+            description: 'Demonstrating how to describe a RESTful API with Swagger',
+        },
+        host: 'localhost:3000',
+        basePath: '/',
+    },
+    apis: ['./controllers/**/*.ts'],
+});
+fs.writeFile('./swagger/public/swagger.json', JSON.stringify(swaggerSpec), (err) => {});
 
-import {ServerMessage} from './helpers/serverMessage';
+const publicDir = path.join(__dirname, 'public');
 
 class Server {
     public app: express.Application;
@@ -48,7 +64,7 @@ class Server {
 
     configureRoutes() {
         // this.addNamespace('/auth', authRouter);
-        // this.addNamespace('/api', apiRouter);
+        this.addNamespace('/api', apiRouter);
     }
 
     configureErrorHandler() {

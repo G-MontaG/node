@@ -16,7 +16,7 @@
     "no-eval": true,
     "no-arg": true,
     "no-internal-module": true,
-    "no-trailing-whitespace": true,
+    "no-trailing-whitespace": false,
     "no-bitwise": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
