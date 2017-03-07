@@ -1,6 +1,6 @@
 import _ = require('lodash');
-import { RouterConfiguration } from './router-configuration';
 import express = require('express');
+import { RouterConfiguration } from './router-configuration';
 
 class ApiController {
     public apiRouter = express.Router();
