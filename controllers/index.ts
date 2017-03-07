@@ -45,6 +45,7 @@ export class ApiController {
      *         description: login
      */
     private login() {
+        console.log('test');
     }
 }
 

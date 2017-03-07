@@ -50,7 +50,7 @@
     "winston": "^2.3.1"
   },
   "scripts": {
-    "server": "nodemon --delay 2 --ext js app.js",
+    "server": "nodemon --delay 2 --ext js --debug=5858 app.js",
     "dev-start": "pm2 start ecosystem-dev.json",
     "dev-stop": "pm2 stop ecosystem-dev.json",
     "dev-restart": "pm2 restart ecosystem-dev.json",
