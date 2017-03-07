@@ -16,7 +16,7 @@ import expressValidator = require('express-validator');
 
 import './db';
 import { ServerMessage } from './helpers/serverMessage';
-import { apiRouter } from './controllers/index';
+import { apiController } from './controllers';
 
 import swaggerJSDoc = require('swagger-jsdoc');
 const swaggerSpec = swaggerJSDoc({
@@ -31,7 +31,11 @@ const swaggerSpec = swaggerJSDoc({
     },
     apis: ['./controllers/**/*.ts'],
 });
-fs.writeFile('./swagger/public/swagger.json', JSON.stringify(swaggerSpec), (err) => {});
+fs.writeFile('./swagger/public/swagger.json', JSON.stringify(swaggerSpec), (err) => {
+    if (err) {
+        throw err;
+    }
+});
 
 const publicDir = path.join(__dirname, 'public');
 
@@ -53,21 +57,21 @@ class Server {
         this.configureRoutes();
         this.configureErrorHandler();
 
-        this.app.listen(this.app.get('port'), function () {
+        this.app.listen(this.app.get('port'), () => {
             console.log(`Server listening on port ${this.app.get('port')} in ${this.app.get('env')} mode`);
-        }.bind(this));
+        });
     }
 
-    addNamespace(namespace: string, router) {
+    private addNamespace(namespace: string, router) {
         this.app.use(namespace, router);
     }
 
-    configureRoutes() {
+    private configureRoutes() {
         // this.addNamespace('/auth', authRouter);
-        this.addNamespace('/api', apiRouter);
+        this.addNamespace('/api', apiController.apiRouter);
     }
 
-    configureErrorHandler() {
+    private configureErrorHandler() {
         this.addNamespace('*', (req: express.Request, res: express.Response, next: express.NextFunction) => {
             if (req.accepts('html')) {
                 res.sendFile('error.html', {root: publicDir});
@@ -78,4 +82,4 @@ class Server {
     }
 }
 
-new Server();
+const server = new Server();

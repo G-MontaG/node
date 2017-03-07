@@ -2,10 +2,6 @@ import express = require('express');
 import winston = require('winston');
 
 export class ServerMessage {
-  constructor() {
-
-  }
-
   public static error(req: any, res: express.Response, status: number, message: string) {
     let _status = status || 500;
     let _message = message || '';

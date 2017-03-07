@@ -1,23 +1,21 @@
 import _ = require('lodash');
 import { RouterConfiguration } from './router-configuration';
+import express = require('express');
 
-export let apiRouter = require('express').Router();
-
-export class ApiController {
-    public configurations: Array<RouterConfiguration>;
+class ApiController {
+    public apiRouter = express.Router();
+    private readonly configurations: RouterConfiguration[] = [
+        {
+            type: 'get', route: '/login', handler: this.login
+        }
+    ];
 
     constructor() {
-        this.configurations = [
-            {
-                type: 'get', route: '/login', handler: this.login
-            }
-        ];
-
         _.forEach(this.configurations, (c) => {
             if (c.middleware) {
-                apiRouter[c.type](c.route, c.middleware, c.handler);
+                this.apiRouter[c.type](c.route, c.middleware, c.handler);
             } else {
-                apiRouter[c.type](c.route, c.handler);
+                this.apiRouter[c.type](c.route, c.handler);
             }
         });
     }
@@ -50,5 +48,3 @@ export class ApiController {
 }
 
 export const apiController = new ApiController();
-
-

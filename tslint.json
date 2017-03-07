@@ -1,5 +1,10 @@
 {
+  "extends": [
+    "tslint:recommended"
+  ],
   "rules": {
+    "trailing-comma": [false, {"multiline": "always", "singleline": "never"}],
+    "interface-name": [false, "always-prefix"],
     "max-line-length": [true, 120],
     "no-inferrable-types": true,
     "class-name": true,
@@ -12,6 +17,11 @@
       "spaces"
     ],
     "eofline": true,
+    "no-console": [true,
+      "time",
+      "timeEnd",
+      "trace"
+    ],
     "no-duplicate-variable": true,
     "no-eval": true,
     "no-arg": true,
@@ -20,6 +30,8 @@
     "no-bitwise": true,
     "no-unused-expression": true,
     "no-var-keyword": true,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
     "one-line": [
       true,
       "check-catch",
