@@ -5,6 +5,7 @@ import express = require('express');
 import bodyParser = require('body-parser');
 import cookieParser = require('cookie-parser');
 import compress = require('compression');
+import cors = require('cors');
 import helmet = require('helmet');
 import dotenv = require('dotenv');
 dotenv.config({path: '.env'});
@@ -16,7 +17,7 @@ import expressValidator = require('express-validator');
 
 import './db';
 import { ServerMessage } from './helpers/serverMessage';
-import { apiController } from './controllers';
+import { apiController } from './controllers/api/api.controller';
 
 import swaggerJSDoc = require('swagger-jsdoc');
 const swaggerSpec = swaggerJSDoc({
@@ -50,6 +51,7 @@ class Server {
         this.app.use(cookieParser());
         // this.app.use(expressValidator());
         this.app.use(compress(6));
+        this.app.use(cors());
         this.app.use(helmet());
 
         this.app.use(express.static(publicDir));

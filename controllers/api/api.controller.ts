@@ -1,12 +1,13 @@
 import _ = require('lodash');
 import express = require('express');
 import { RouterConfiguration } from '../router-configuration';
+import { User } from '../../models/user.model';
 
 class ApiController {
     public apiRouter = express.Router();
     private readonly configurations: RouterConfiguration[] = [
         {
-            type: 'get', route: '/login', handler: this.login
+            type: 'get', route: '/test', handler: this.test
         }
     ];
 
@@ -22,28 +23,25 @@ class ApiController {
 
     /**
      * @swagger
-     * /login:
-     *   post:
-     *     description: Login to the application
+     * /api/test:
+     *   get:
+     *     description: test the application
      *     produces:
      *       - application/json
-     *     parameters:
-     *       - name: username
-     *         description: Username to use for login.
-     *         in: formData
-     *         required: true
-     *         type: string
-     *       - name: password
-     *         description: User's password.
-     *         in: formData
-     *         required: true
-     *         type: string
      *     responses:
      *       200:
-     *         description: login
+     *         description: test
      */
-    private login() {
+    private test() {
         console.log('test');
+        const user = new User({
+            email: 'test@test.com'
+        });
+        user.save((err) => {
+            if (err) {
+                return console.log(err);
+            }
+        });
     }
 }
 
