@@ -1,49 +1,41 @@
 import crypto = require('crypto');
 import mongoose = require('mongoose');
+import moment = require('moment');
 import passwordGenerator = require('password-generator');
 import { passwordMinLength } from '../helpers/constants';
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    email: { type: String, lowercase: true, unique: true, index: true },
-    emailConfirmed: { type: Boolean, default: false},
-    hash: String,
-    salt: String,
+    email: {type: String, required: true, lowercase: true, unique: true, index: true},
+    emailConfirmed: {type: Boolean, required: true, default: false},
+    hash: {type: String, required: true},
+    salt: {type: String, required: true},
     emailVerifyToken: {
-        value: String,
-        exp: Date
+        value: {type: String, required: true},
+        exp: {type: Date, required: true}
     },
     passwordResetToken: {
-        value: String,
-        exp: Date
+        value: {type: String, required: true},
+        exp: {type: Date, required: true}
     },
     forgotPasswordToken: {
-        value: String,
-        exp: Date
+        value: {type: String, required: true},
+        exp: {type: Date, required: true}
     },
     profile: {
-        firstname: {type: String, default: ''},
-        lastname: {type: String, default: ''},
-        gender: {type: String, default: ''},
-        language: {type: String, default: ''},
+        first_name: {type: String, required: true, default: ''},
+        last_name: {type: String, required: true, default: ''},
+        gender: {type: String, required: true, default: ''},
+        language: {type: String, required: true, default: ''},
         picture: {
-            url: {type: String, default: ''},
-            source: {type: String, default: ''}
+            url: {type: String, required: true, default: ''},
+            source: {type: String, required: true, default: ''}
         }
-    },
+    }
 });
 
-/**
- * Generate hash based on <code>crypto.pbkdf2('sha512')</code> algorithm
- * @private
- * @param {string} password
- * @param {string} salt
- * @returns {Promise.<Object>|null|error} On success the promise will be resolved with object<br>
- *   <code>{ salt: buffer, hash: buffer }</code>
- *   On error the promise will be rejected with an null if password argument not exist
- *   and with a error if <code>crypto.pbkdf2()</code> function throw error
- */
-function getHash(password, salt) {
+// Generate hash based on <code>crypto.pbkdf2('sha512')</code> algorithm
+function getHash(password: string, salt: string): Promise<string> {
     return new Promise((resolve, reject) => {
         if (!password || !salt) {
             reject(null);
@@ -59,16 +51,8 @@ function getHash(password, salt) {
     });
 }
 
-/**
- * Compare passwords based on their hashes
- * @private
- * @param {string} password
- * @param {string} hash
- * @param {string} salt
- * @returns {Promise.<boolean>|null} On success the promise will be resolved with boolean value
- *   On error the promise will be rejected with an null if password, salt or hash arguments not exist
- */
-function compareHash(password, hash, salt) {
+// Compare passwords based on their hashes
+function compareHash(password: string, hash: string, salt: string): Promise<boolean> {
     if (!password || !hash || !salt) {
         return null;
     }
@@ -77,25 +61,66 @@ function compareHash(password, hash, salt) {
     });
 }
 
-userSchema.methods.cryptPassword = function () {
+//
+userSchema.methods.cryptPassword = (password: string): Promise<void> => {
     this.salt = crypto.randomBytes(128).toString('hex');
-    return getHash(this.password, this.salt).then((hash) => {
-        this.password = hash;
+    return getHash(password, this.salt).then((hash) => {
+        this.hash = hash;
     });
 };
 
-userSchema.methods.checkPassword = function (password) {
-    return compareHash(password, this.password, this.salt).then((result) => {
+userSchema.methods.checkPassword = (password: string): Promise<boolean> => {
+    return compareHash(password, this.hash, this.salt).then((result) => {
         return result;
     });
 };
 
-userSchema.methods.createPassword = function () {
+userSchema.methods.createPassword = (): string => {
     this.password = passwordGenerator(
         passwordMinLength,
         false,
         /[\w\d\W\!\@\#\$\%\^\&\*\(\)\=\_\+\,\.\/\<\>\?\;\'\:\"\|\{\}]/);
     return this.password;
+};
+
+userSchema.methods.checkEmailConfirmation = (token: string): boolean => {
+    if (!this.emailVerifyToken) {
+        return false;
+    } else if (moment(this.emailVerifyToken.exp) < moment()) {
+        return false;
+    }
+    return this.emailVerifyToken.value === token;
+};
+
+userSchema.methods.setEmailConfirmed = (): void => {
+    this.emailConfirmed = true;
+    this.emailVerifyToken = undefined;
+};
+
+userSchema.methods.checkPasswordResetToken = (token: string): boolean => {
+    if (!this.passwordResetToken) {
+        return false;
+    } else if (moment(this.passwordResetToken.exp) < moment()) {
+        return false;
+    }
+    return this.passwordResetToken.value === token;
+};
+
+userSchema.methods.setPasswordResetTokenUsed = (): void => {
+    this.passwordResetToken = undefined;
+};
+
+userSchema.methods.checkForgotPasswordToken = (token: string): boolean => {
+    if (!this.forgotPasswordToken) {
+        return false;
+    } else if (moment(this.forgotPasswordToken.exp) < moment()) {
+        return false;
+    }
+    return this.forgotPasswordToken.value === token;
+};
+
+userSchema.methods.setForgotPasswordTokenUsed = (): void => {
+    this.forgotPasswordToken = undefined;
 };
 
 export const User = mongoose.model('User', userSchema);

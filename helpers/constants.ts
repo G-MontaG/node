@@ -1,5 +1,4 @@
-import moment = require('moment');
-import crypto = require('crypto');
+
 import nodemailer = require('nodemailer');
 
 export const passwordMinLength = 8;
@@ -21,21 +20,3 @@ export const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASSWORD
     }
 });
-
-export function generateEmailToken(user, type) {
-    if (type === 'forgot') {
-        user.forgotPasswordToken.value = crypto.randomBytes(64).toString('base64').slice(0, emailTokenLength);
-        user.forgotPasswordToken.exp = moment().add(emailTokenExp, 'hours');
-        return user.forgotPasswordToken.value;
-    } else if (type === 'reset') {
-        user.passwordResetToken.value = crypto.randomBytes(64).toString('base64').slice(0, emailTokenLength);
-        user.passwordResetToken.exp = moment().add(emailTokenExp, 'hours');
-        return user.passwordResetToken.value;
-    } else if (type === 'verify') {
-        user.emailVerifyToken.value = crypto.randomBytes(64).toString('base64').slice(0, emailTokenLength);
-        user.emailVerifyToken.exp = moment().add(emailTokenExp, 'hours');
-        return user.passwordResetToken.value;
-    } else {
-        return null;
-    }
-}

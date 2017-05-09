@@ -16,7 +16,7 @@ const upload = multer({dest: path.join(__dirname, 'uploads')});
 import expressValidator = require('express-validator');
 
 import './db';
-import { ServerMessage } from './helpers/serverMessage';
+import { ServerMessage } from './helpers/server-message';
 import { apiController } from './controllers/api/api.controller';
 
 import swaggerJSDoc = require('swagger-jsdoc');
