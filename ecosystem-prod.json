@@ -3,9 +3,9 @@
     {
       "name": "node",
       "script": "app.js",
-      "instances": "1",
-      "env": {
-        "NODE_ENV": "development"
+      "instances": "4",
+      "env_production": {
+        "NODE_ENV": "production"
       },
       "exec_mode": "cluster",
       "error_file": "err.log",

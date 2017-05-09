@@ -57,10 +57,14 @@
   },
   "scripts": {
     "server": "nodemon --delay 2 --ext js --debug=5858 app.js",
-    "dev-start": "pm2 start ecosystem-dev.json",
+    "dev-start": "pm2 start ecosystem-dev.json --env development",
     "dev-stop": "pm2 stop ecosystem-dev.json",
     "dev-restart": "pm2 restart ecosystem-dev.json",
     "dev-delete": "pm2 delete ecosystem-dev.json",
+    "prod-start": "pm2 start ecosystem-prod.json --env production",
+    "prod-stop": "pm2 stop ecosystem-prod.json",
+    "prod-restart": "pm2 restart ecosystem-prod.json",
+    "prod-delete": "pm2 delete ecosystem-prod.json",
     "list": "pm2 list",
     "monit": "pm2 monit",
     "kill": "pm2 kill"
