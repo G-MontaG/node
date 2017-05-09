@@ -7,8 +7,14 @@ export const passwordMaxLength = 30;
 export const tokenAlg = 'HS512';
 export const tokenExp = 7; // days
 
-export const emailTokenLength = 8; // целое число или допиши округление в postForgotPasswordEmail
-export const emailTokenExp = 0.5; // hours
+export const emailConfirmTokenLength = 8; // must be integer
+export const emailConfirmTokenExp = 0.5; // hours
+
+export const passwordResetTokenLength = 8;
+export const passwordResetTokenExp = 0.5;
+
+export const forgotPasswordTokenLength = 8;
+export const forgotPasswordTokenExp = 0.5;
 
 export const expTimeAttempts = 1; // hours
 
