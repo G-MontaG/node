@@ -34,14 +34,6 @@ class ApiController {
      */
     private test() {
         console.log('test');
-        const user = new User({
-            email: 'test@test.com'
-        });
-        user.save((err) => {
-            if (err) {
-                return console.log(err);
-            }
-        });
     }
 }
 

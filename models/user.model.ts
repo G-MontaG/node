@@ -42,6 +42,52 @@ const userSchema = new Schema({
     }
 });
 
+export interface IUserDocument extends mongoose.Document {
+    email: string;
+    emailConfirmed: boolean;
+    hash: string;
+    salt: string;
+    emailVerifyToken: {
+        value: string,
+        exp: number
+    };
+    passwordResetToken: {
+        value: string,
+        exp: number
+    };
+    forgotPasswordToken: {
+        value: string,
+        exp: number
+    };
+    profile: {
+        first_name: string,
+        last_name: string,
+        gender: string,
+        language: string,
+        picture: {
+            url: string,
+            source: string
+        }
+    };
+
+    cryptPassword(password: string): Promise<void>;
+    checkPassword(password: string): Promise<boolean>;
+    createPassword(): string;
+    createEmailVerifyToken(): { value: string, exp: number };
+    checkEmailConfirmation(token: string): boolean;
+    setEmailConfirmed(): void;
+    createPasswordResetToken(): { value: string, exp: number };
+    checkPasswordResetToken(token: string): boolean;
+    setPasswordResetTokenUsed(): void;
+    createForgotPasswordToken(): { value: string, exp: number };
+    checkForgotPasswordToken(token: string): boolean;
+    setForgotPasswordTokenUsed(): void;
+}
+
+export interface IUserModel extends mongoose.Model<IUserDocument> {
+    findByEmail(email: string, cb: () => void);
+}
+
 // Generate hash based on <code>crypto.pbkdf2('sha512')</code> algorithm
 function getHash(password: string, salt: string): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -69,7 +115,10 @@ function compareHash(password: string, hash: string, salt: string): Promise<bool
     });
 }
 
-//
+userSchema.statics.findByEmail = (email: string, cb: () => void) => {
+    return User.findOne({ email }, cb);
+};
+
 userSchema.methods.cryptPassword = (password: string): Promise<void> => {
     this.salt = crypto.randomBytes(128).toString('hex');
     return getHash(password, this.salt).then((hash) => {
@@ -152,4 +201,4 @@ userSchema.methods.setForgotPasswordTokenUsed = (): void => {
     this.forgotPasswordToken = undefined;
 };
 
-export const User = mongoose.model('User', userSchema);
+export const User = mongoose.model('User', userSchema) as IUserModel;
