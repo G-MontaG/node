@@ -11,4 +11,13 @@ const budgetSchema = new Schema({
     date_format: {type: String, required: true, default: '1'},
 });
 
-export const Budget = mongoose.model('Budget', budgetSchema);
+export interface IBudgetDocument extends mongoose.Document {
+    value: string;
+    label: string;
+}
+
+export interface IBudgetModel extends mongoose.Model<IBudgetDocument> {
+    findByValue(value: string, cb: () => void);
+}
+
+export const Budget = mongoose.model('Budget', budgetSchema) as IBudgetModel;

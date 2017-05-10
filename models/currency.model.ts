@@ -20,4 +20,4 @@ currencySchema.statics.findByValue = (value: string, cb: () => void) => {
     return Currency.findOne({ value }, 'value label', cb);
 };
 
-export const Currency = mongoose.model('Currency', currencySchema);
+export const Currency = mongoose.model('Currency', currencySchema) as ICurrencyModel;
