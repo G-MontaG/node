@@ -5,19 +5,23 @@ const Schema = mongoose.Schema;
 const accountSchema = new Schema({
     budget_id: {type: Schema.Types.ObjectId, required: true, index: true},
     name: {type: String, required: true},
+    description: {type: String, required: true},
     type: {type: String, required: true, default: '1'},
     balance: {type: Number, required: true, default: 0},
+    bank_connection: {type: Object, default: {}}
 });
 
 export interface IAccountDocument extends mongoose.Document {
     budget_id: string;
     name: string;
+    description: string;
     type: string;
     balance: number;
+    bank_connection: object;
 }
 
 export interface IAccountModel extends mongoose.Model<IAccountDocument> {
-    findByBudgetId(userId: string, cb: () => void);
+    findByBudgetId(budgetId: string, cb: () => void);
 }
 
 accountSchema.statics.findByBudgetId = (budgetId: string, cb: () => void) => {
