@@ -9,7 +9,10 @@ const transactionSchema = new Schema({
     payee: {type: String},
     category: {type: String},
     memo: {type: String},
-    flow: {type: Number, required: true}
+    flow: { type: {
+        value: {type: Number, required: true},
+        type: {type: String, required: true}
+    }, required: true}
 });
 
 export interface ITransactionDocument extends mongoose.Document {
@@ -19,8 +22,10 @@ export interface ITransactionDocument extends mongoose.Document {
     payee: string;
     category: string;
     memo: string;
-    flow: string;
-    inflow: string;
+    flow: {
+        value: number,
+        type: string
+    };
 
     setInflow(inflow: number);
     setOutflow(outflow: number);
@@ -35,11 +40,17 @@ transactionSchema.statics.findByAccountId = (accountId: string, cb: () => void) 
 };
 
 transactionSchema.methods.setInflow = (inflow: number) => {
-    this.flow = Math.abs(inflow);
+    this.flow = {
+        value: Math.abs(inflow),
+        type: 'inflow'
+    };
 };
 
 transactionSchema.methods.setOutflow = (outflow: number) => {
-    this.flow = Math.abs(outflow) * -1;
+    this.flow = {
+        value: Math.abs(outflow),
+        type: 'outflow'
+    };
 };
 
 export const Transaction = mongoose.model('Transaction', transactionSchema) as ITransactionModel;
