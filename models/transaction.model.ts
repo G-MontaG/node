@@ -9,8 +9,7 @@ const transactionSchema = new Schema({
     payee: {type: String},
     category: {type: String},
     memo: {type: String},
-    outflow: {type: Number},
-    inflow: {type: Number}
+    flow: {type: Number, required: true}
 });
 
 export interface ITransactionDocument extends mongoose.Document {
@@ -20,8 +19,11 @@ export interface ITransactionDocument extends mongoose.Document {
     payee: string;
     category: string;
     memo: string;
-    outflow: string;
+    flow: string;
     inflow: string;
+
+    setInflow(inflow: number);
+    setOutflow(outflow: number);
 }
 
 export interface ITransactionModel extends mongoose.Model<ITransactionDocument> {
@@ -30,6 +32,14 @@ export interface ITransactionModel extends mongoose.Model<ITransactionDocument> 
 
 transactionSchema.statics.findByAccountId = (accountId: string, cb: () => void) => {
     return Transaction.find({ account_id: accountId }, cb);
+};
+
+transactionSchema.methods.setInflow = (inflow: number) => {
+    this.flow = Math.abs(inflow);
+};
+
+transactionSchema.methods.setOutflow = (outflow: number) => {
+    this.flow = Math.abs(outflow) * -1;
 };
 
 export const Transaction = mongoose.model('Transaction', transactionSchema) as ITransactionModel;
