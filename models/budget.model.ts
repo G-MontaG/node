@@ -17,7 +17,11 @@ export interface IBudgetDocument extends mongoose.Document {
 }
 
 export interface IBudgetModel extends mongoose.Model<IBudgetDocument> {
-    findByValue(value: string, cb: () => void);
+    findByUserId(userId: string, cb: () => void);
 }
+
+budgetSchema.statics.findByUserId = (userId: string, cb: () => void) => {
+    return Budget.find({ user_id: userId }, cb);
+};
 
 export const Budget = mongoose.model('Budget', budgetSchema) as IBudgetModel;
