@@ -3,8 +3,8 @@ import express = require('express');
 import { RouterConfiguration } from '../router-configuration';
 import { User } from '../../models/user.model';
 
-class ApiController {
-    public apiRouter = express.Router();
+class ApiRouter {
+    public routes = express.Router();
     private readonly configurations: RouterConfiguration[] = [
         {
             type: 'get', route: '/test', handler: this.test
@@ -14,9 +14,9 @@ class ApiController {
     constructor() {
         _.forEach(this.configurations, (c) => {
             if (c.middleware) {
-                this.apiRouter[c.type](c.route, c.middleware, c.handler);
+                this.routes[c.type](c.route, c.middleware, c.handler);
             } else {
-                this.apiRouter[c.type](c.route, c.handler);
+                this.routes[c.type](c.route, c.handler);
             }
         });
     }
@@ -37,4 +37,4 @@ class ApiController {
     }
 }
 
-export const apiController = new ApiController();
+export const apiRouter = new ApiRouter();

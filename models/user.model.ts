@@ -16,28 +16,28 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     email: {type: String, required: true, lowercase: true, unique: true, index: true},
     emailConfirmed: {type: Boolean, required: true, default: false},
-    hash: {type: String, required: true},
-    salt: {type: String, required: true},
+    hash: {type: String},
+    salt: {type: String},
     emailVerifyToken: {
-        value: {type: String, required: true},
-        exp: {type: Number, required: true}
+        value: {type: String},
+        exp: {type: Number}
     },
     passwordResetToken: {
-        value: {type: String, required: true},
-        exp: {type: Number, required: true}
+        value: {type: String},
+        exp: {type: Number}
     },
     forgotPasswordToken: {
-        value: {type: String, required: true},
-        exp: {type: Number, required: true}
+        value: {type: String},
+        exp: {type: Number}
     },
     profile: {
-        first_name: {type: String, required: true, default: ''},
-        last_name: {type: String, required: true, default: ''},
-        gender: {type: String, required: true, default: ''},
-        language: {type: String, required: true, default: ''},
+        first_name: {type: String, default: ''},
+        last_name: {type: String, default: ''},
+        gender: {type: String, default: ''},
+        language: {type: String, default: ''},
         picture: {
-            url: {type: String, required: true, default: ''},
-            source: {type: String, required: true, default: ''}
+            url: {type: String, default: ''},
+            source: {type: String, default: ''}
         }
     }
 });
@@ -116,7 +116,7 @@ function compareHash(password: string, hash: string, salt: string): Promise<bool
 }
 
 userSchema.statics.findByEmail = (email: string, cb: () => void) => {
-    return User.findOne({ email }, cb);
+    return User.findOne({email}, cb);
 };
 
 userSchema.methods.cryptPassword = (password: string): Promise<void> => {
@@ -133,17 +133,17 @@ userSchema.methods.checkPassword = (password: string): Promise<boolean> => {
 };
 
 userSchema.methods.createPassword = (): string => {
-    this.password = passwordGenerator(
+    return passwordGenerator(
         passwordMinLength,
         false,
         /[\w\d\W\!\@\#\$\%\^\&\*\(\)\=\_\+\,\.\/\<\>\?\;\'\:\"\|\{\}]/);
-    return this.password;
 };
 
 userSchema.methods.createEmailVerifyToken = (): { value: string, exp: number } => {
-    this.emailVerifyToken = {};
-    this.emailVerifyToken.value = crypto.randomBytes(64).toString('base64').slice(0, emailConfirmTokenLength);
-    this.emailVerifyToken.exp = moment().add(emailConfirmTokenExp, 'hours').unix();
+    this.emailVerifyToken = {
+        value: crypto.randomBytes(64).toString('base64').slice(0, emailConfirmTokenLength),
+        exp: moment().add(emailConfirmTokenExp, 'hours').unix()
+    };
     return this.emailVerifyToken;
 };
 

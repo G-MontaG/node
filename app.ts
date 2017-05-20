@@ -16,8 +16,8 @@ const upload = multer({dest: path.join(__dirname, 'uploads')});
 import expressValidator = require('express-validator');
 
 import './db';
-import { ServerMessage } from './helpers/server-message';
-import { apiController } from './controllers/api/api.controller';
+import { apiRouter } from './controllers/api/api.router';
+import { authRouter } from './controllers/auth/auth.router';
 
 import swaggerJSDoc = require('swagger-jsdoc');
 const swaggerSpec = swaggerJSDoc({
@@ -69,17 +69,17 @@ class Server {
     }
 
     private configureRoutes() {
-        // this.addNamespace('/auth', authRouter);
-        this.addNamespace('/api', apiController.apiRouter);
+        this.addNamespace('/auth', authRouter.routes);
+        this.addNamespace('/api', apiRouter.routes);
     }
 
     private configureErrorHandler() {
-        this.addNamespace('*', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-            if (req.accepts('html')) {
-                res.sendFile('error.html', {root: publicDir});
-            } else if (req.accepts('json')) {
-                ServerMessage.error(req, res, 404, 'Page not found');
-            }
+        this.app.use((err: any, req: express.Request, res: express.Response) => {
+            console.error(err.stack);
+            res.status(err.status || 500).send({
+                message: err.message,
+                error: err
+            });
         });
     }
 }
