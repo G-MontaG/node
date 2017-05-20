@@ -74,11 +74,11 @@ class Server {
     }
 
     private configureErrorHandler() {
-        this.app.use((err: any, req: express.Request, res: express.Response) => {
+        this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
             console.error(err.stack);
             res.status(err.status || 500).send({
-                message: err.message,
-                error: err
+                message: err.message || err.name,
+                error: err.toString()
             });
         });
     }

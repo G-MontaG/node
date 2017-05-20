@@ -17,23 +17,25 @@ class SignUpController {
 
     public signUpHandler() {
         this.validate();
+
+        const password = this.req.body.password;
+        delete this.req.body.password;
+        const newUser: IUserDocument = new User(this.req.body);
+
         User.findOne({email: this.req.body.email}).exec()
             .then((user: IUserDocument) => {
                 if (user) {
                     throw Boom.conflict('Email is already in use').output;
-                } else {
-                    const password = this.req.body.password;
-                    delete this.req.body.password;
-                    const newUser = new User(this.req.body);
-                    newUser.createEmailVerifyToken();
-                    newUser.cryptPassword(password);
-                    return newUser;
                 }
             })
-            .then((newUser: IUserDocument) => {
+            .then(() => {
+                newUser.createEmailVerifyToken();
+                return newUser.cryptPassword(password);
+            })
+            .then(() => {
                 return newUser.save();
             })
-            .then((newUser: IUserDocument) => {
+            .then(() => {
                 const mailOptions = {
                     to: newUser.email,
                     from: 'arthur.osipenko@gmail.com',
@@ -64,11 +66,12 @@ class SignUpController {
                 return null;
             }
             const error = Boom.badRequest().output;
-            this.res.status(error.statusCode).send({
+            error.payload = {
                 statusCode: error.statusCode,
                 error: validationError.details,
                 message: validationError.name
-            });
+            };
+            throw error;
         });
     }
 

@@ -119,14 +119,14 @@ userSchema.statics.findByEmail = (email: string, cb: () => void) => {
     return User.findOne({email}, cb);
 };
 
-userSchema.methods.cryptPassword = (password: string): Promise<void> => {
+userSchema.methods.cryptPassword = function(password: string): Promise<void> {
     this.salt = crypto.randomBytes(128).toString('hex');
     return getHash(password, this.salt).then((hash) => {
         this.hash = hash;
     });
 };
 
-userSchema.methods.checkPassword = (password: string): Promise<boolean> => {
+userSchema.methods.checkPassword = function(password: string): Promise<boolean> {
     return compareHash(password, this.hash, this.salt).then((result) => {
         return result;
     });
@@ -139,14 +139,14 @@ userSchema.methods.createPassword = (): string => {
         /[\w\d\W\!\@\#\$\%\^\&\*\(\)\=\_\+\,\.\/\<\>\?\;\'\:\"\|\{\}]/);
 };
 
-userSchema.methods.createEmailVerifyToken = () => {
+userSchema.methods.createEmailVerifyToken = function() {
     this.emailVerifyToken = {
         value: crypto.randomBytes(64).toString('base64').slice(0, emailConfirmTokenLength),
         exp: moment().add(emailConfirmTokenExp, 'hours').unix()
     };
 };
 
-userSchema.methods.checkEmailConfirmation = (token: string): boolean => {
+userSchema.methods.checkEmailConfirmation = function(token: string): boolean {
     if (!this.emailVerifyToken) {
         return false;
     } else if (moment(this.emailVerifyToken.exp) < moment()) {
@@ -155,19 +155,19 @@ userSchema.methods.checkEmailConfirmation = (token: string): boolean => {
     return this.emailVerifyToken.value === token;
 };
 
-userSchema.methods.setEmailConfirmed = (): void => {
+userSchema.methods.setEmailConfirmed = function(): void {
     this.emailConfirmed = true;
     this.emailVerifyToken = undefined;
 };
 
-userSchema.methods.createPasswordResetToken = () => {
+userSchema.methods.createPasswordResetToken = function() {
     this.passwordResetToken = {
         value: crypto.randomBytes(64).toString('base64').slice(0, passwordResetTokenLength),
         exp: moment().add(passwordResetTokenExp, 'hours').unix()
     };
 };
 
-userSchema.methods.checkPasswordResetToken = (token: string): boolean => {
+userSchema.methods.checkPasswordResetToken = function(token: string): boolean {
     if (!this.passwordResetToken) {
         return false;
     } else if (moment(this.passwordResetToken.exp) < moment()) {
@@ -176,18 +176,18 @@ userSchema.methods.checkPasswordResetToken = (token: string): boolean => {
     return this.passwordResetToken.value === token;
 };
 
-userSchema.methods.setPasswordResetTokenUsed = (): void => {
+userSchema.methods.setPasswordResetTokenUsed = function(): void {
     this.passwordResetToken = undefined;
 };
 
-userSchema.methods.createForgotPasswordToken = () => {
+userSchema.methods.createForgotPasswordToken = function() {
     this.forgotPasswordToken = {
         value: crypto.randomBytes(64).toString('base64').slice(0, forgotPasswordTokenLength),
         exp: moment().add(forgotPasswordTokenExp, 'hours').unix()
     };
 };
 
-userSchema.methods.checkForgotPasswordToken = (token: string): boolean => {
+userSchema.methods.checkForgotPasswordToken = function(token: string): boolean {
     if (!this.forgotPasswordToken) {
         return false;
     } else if (moment(this.forgotPasswordToken.exp) < moment()) {
@@ -196,7 +196,7 @@ userSchema.methods.checkForgotPasswordToken = (token: string): boolean => {
     return this.forgotPasswordToken.value === token;
 };
 
-userSchema.methods.setForgotPasswordTokenUsed = (): void => {
+userSchema.methods.setForgotPasswordTokenUsed = function(): void {
     this.forgotPasswordToken = undefined;
 };
 
