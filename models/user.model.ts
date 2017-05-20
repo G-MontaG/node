@@ -73,13 +73,13 @@ export interface IUserDocument extends mongoose.Document {
     cryptPassword(password: string): Promise<void>;
     checkPassword(password: string): Promise<boolean>;
     createPassword(): string;
-    createEmailVerifyToken(): { value: string, exp: number };
+    createEmailVerifyToken();
     checkEmailConfirmation(token: string): boolean;
     setEmailConfirmed(): void;
-    createPasswordResetToken(): { value: string, exp: number };
+    createPasswordResetToken();
     checkPasswordResetToken(token: string): boolean;
     setPasswordResetTokenUsed(): void;
-    createForgotPasswordToken(): { value: string, exp: number };
+    createForgotPasswordToken();
     checkForgotPasswordToken(token: string): boolean;
     setForgotPasswordTokenUsed(): void;
 }
@@ -139,12 +139,11 @@ userSchema.methods.createPassword = (): string => {
         /[\w\d\W\!\@\#\$\%\^\&\*\(\)\=\_\+\,\.\/\<\>\?\;\'\:\"\|\{\}]/);
 };
 
-userSchema.methods.createEmailVerifyToken = (): { value: string, exp: number } => {
+userSchema.methods.createEmailVerifyToken = () => {
     this.emailVerifyToken = {
         value: crypto.randomBytes(64).toString('base64').slice(0, emailConfirmTokenLength),
         exp: moment().add(emailConfirmTokenExp, 'hours').unix()
     };
-    return this.emailVerifyToken;
 };
 
 userSchema.methods.checkEmailConfirmation = (token: string): boolean => {
@@ -161,11 +160,11 @@ userSchema.methods.setEmailConfirmed = (): void => {
     this.emailVerifyToken = undefined;
 };
 
-userSchema.methods.createPasswordResetToken = (): { value: string, exp: number } => {
-    this.passwordResetToken = {};
-    this.passwordResetToken.value = crypto.randomBytes(64).toString('base64').slice(0, passwordResetTokenLength);
-    this.passwordResetToken.exp = moment().add(passwordResetTokenExp, 'hours').unix();
-    return this.passwordResetToken;
+userSchema.methods.createPasswordResetToken = () => {
+    this.passwordResetToken = {
+        value: crypto.randomBytes(64).toString('base64').slice(0, passwordResetTokenLength),
+        exp: moment().add(passwordResetTokenExp, 'hours').unix()
+    };
 };
 
 userSchema.methods.checkPasswordResetToken = (token: string): boolean => {
@@ -181,11 +180,11 @@ userSchema.methods.setPasswordResetTokenUsed = (): void => {
     this.passwordResetToken = undefined;
 };
 
-userSchema.methods.createForgotPasswordToken = (): { value: string, exp: number } => {
-    this.forgotPasswordToken = {};
-    this.forgotPasswordToken.value = crypto.randomBytes(64).toString('base64').slice(0, forgotPasswordTokenLength);
-    this.forgotPasswordToken.exp = moment().add(forgotPasswordTokenExp, 'hours').unix();
-    return this.forgotPasswordToken;
+userSchema.methods.createForgotPasswordToken = () => {
+    this.forgotPasswordToken = {
+        value: crypto.randomBytes(64).toString('base64').slice(0, forgotPasswordTokenLength),
+        exp: moment().add(forgotPasswordTokenExp, 'hours').unix()
+    };
 };
 
 userSchema.methods.checkForgotPasswordToken = (token: string): boolean => {
