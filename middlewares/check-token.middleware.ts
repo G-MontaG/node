@@ -1,18 +1,9 @@
 import express = require('express');
 import jwt = require('jsonwebtoken');
 import Boom = require('boom');
+import { BaseMiddleware } from './base.middleware';
 
-class CheckTokenMiddleware {
-    private req: any;
-    private res: express.Response;
-    private next: express.NextFunction;
-
-    public setHandlerParams(req: express.Request, res: express.Response, next: express.NextFunction) {
-        this.req = req;
-        this.res = res;
-        this.next = next;
-    }
-
+class CheckTokenMiddleware extends BaseMiddleware {
     public middleware() {
         new Promise((resolve, reject) => {
             if (!this.req.get('Authorization')) {
@@ -35,13 +26,6 @@ class CheckTokenMiddleware {
         }).catch((err) => {
             this.errorHandler(err);
         });
-    }
-
-    private errorHandler(err) {
-        if (!err.statusCode || !err.payload) {
-            this.next(err);
-        }
-        this.res.status(err.statusCode).send(err.payload);
     }
 }
 
