@@ -5,12 +5,12 @@ import Joi = require('joi');
 import { IUserDocument, User } from '../../models/user.model';
 import { tokenAlg, tokenExp, transporter } from '../../helpers/constants';
 
-class SignUpController {
+class LoginController {
     private req: express.Request;
     private res: express.Response;
     private next: express.NextFunction;
 
-    private newUser: IUserDocument;
+    private user: IUserDocument;
 
     private schema = Joi.object().keys({
         email: Joi.string().email(),
@@ -22,7 +22,7 @@ class SignUpController {
         this.res = res;
         this.next = next;
 
-        this.newUser = undefined;
+        this.user = undefined;
     }
 
     public handler() {
@@ -30,9 +30,8 @@ class SignUpController {
 
         User.findOne({email: this.req.body.email}).exec()
             .then(this.checkUserExist.bind(this))
-            .then(this.createUser.bind(this))
-            .then(this.saveUser.bind(this))
-            .then(this.sendEmailVerification.bind(this))
+            .then(this.checkPassword.bind(this))
+            .then(this.verifyResult.bind(this))
             .then(this.responseToken.bind(this))
             .catch(this.errorHandler.bind(this));
     }
@@ -53,44 +52,29 @@ class SignUpController {
     }
 
     private checkUserExist(user: IUserDocument) {
-        if (user) {
-            throw Boom.conflict('Email is already in use').output;
+        if (!user) {
+            throw Boom.unauthorized('Email not found').output;
         }
         const password = this.req.body.password;
         delete this.req.body.password;
+        delete this.req.body.email;
+        this.user = user;
         return password;
     }
 
-    private createUser(password) {
-        this.newUser = new User(this.req.body);
-        delete this.req.body.email;
-        this.newUser.createEmailVerifyToken();
-        return this.newUser.cryptPassword(password);
+    private checkPassword(password) {
+        return this.user.checkPassword(password);
     }
 
-    private saveUser() {
-        return this.newUser.save();
-    }
-
-    private sendEmailVerification() {
-        const mailOptions = {
-            to: this.newUser.email,
-            from: 'arthur.osipenko@gmail.com',
-            subject: 'Hello on XXX',
-            text: `Hello. This is a token for your account 
-                   ${this.newUser.emailVerifyToken.value}
-                   Please go back and enter it in your profile to verify your email.`
-        };
-        transporter.sendMail(mailOptions, (err) => {
-            if (err) {
-                console.error(err);
-            }
-        });
+    private verifyResult(result) {
+        if (!result) {
+            throw Boom.unauthorized('Incorrect password').output;
+        }
     }
 
     private responseToken() {
         const token = jwt.sign({
-            'id': this.newUser.id,
+            'id': this.user.id,
             'user-agent': this.req.headers['user-agent']
         }, process.env.JWT_SECRET, {
             algorithm: tokenAlg,
@@ -108,8 +92,8 @@ class SignUpController {
     }
 }
 
-export function signUpHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const signUpController = new SignUpController();
-    signUpController.setHandlerParams(req, res, next);
-    signUpController.handler();
+export function loginHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const loginController = new LoginController();
+    loginController.setHandlerParams(req, res, next);
+    loginController.handler();
 }

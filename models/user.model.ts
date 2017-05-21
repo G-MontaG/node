@@ -43,6 +43,7 @@ const userSchema = new Schema({
 });
 
 export interface IUserDocument extends mongoose.Document {
+    id: string;
     email: string;
     emailConfirmed: boolean;
     hash: string;
