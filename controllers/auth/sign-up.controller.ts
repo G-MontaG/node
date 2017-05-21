@@ -3,12 +3,14 @@ import jwt = require('jsonwebtoken');
 import Boom = require('boom');
 import Joi = require('joi');
 import { IUserDocument, User } from '../../models/user.model';
-import { transporter } from '../../helpers/constants';
+import { tokenAlg, tokenExp, transporter } from '../../helpers/constants';
 
 class SignUpController {
     private req: express.Request;
     private res: express.Response;
     private next: express.NextFunction;
+
+    private newUser: IUserDocument;
 
     private schema = Joi.object().keys({
         email: Joi.string().email(),
@@ -18,39 +20,12 @@ class SignUpController {
     public signUpHandler() {
         this.validate();
 
-        const password = this.req.body.password;
-        delete this.req.body.password;
-        const newUser: IUserDocument = new User(this.req.body);
-
         User.findOne({email: this.req.body.email}).exec()
-            .then((user: IUserDocument) => {
-                if (user) {
-                    throw Boom.conflict('Email is already in use').output;
-                }
-            })
-            .then(() => {
-                newUser.createEmailVerifyToken();
-                return newUser.cryptPassword(password);
-            })
-            .then(() => {
-                return newUser.save();
-            })
-            .then(() => {
-                const mailOptions = {
-                    to: newUser.email,
-                    from: 'arthur.osipenko@gmail.com',
-                    subject: 'Hello on XXX',
-                    text: `Hello. This is a token for your account 
-                           ${newUser.emailVerifyToken.value}
-                           Please go back and enter it in your profile to verify your email.`
-                };
-                transporter.sendMail(mailOptions, (err) => {
-                    if (err) {
-                        console.log(err);
-                        throw Boom.badImplementation('Send email error').output;
-                    }
-                });
-            })
+            .then(this.checkUserExist.bind(this))
+            .then(this.createUser.bind(this))
+            .then(this.saveUser.bind(this))
+            .then(this.sendEmailVerification.bind(this))
+            .then(this.responseToken.bind(this))
             .catch(this.errorHandler.bind(this));
     }
 
@@ -58,6 +33,8 @@ class SignUpController {
         this.req = req;
         this.res = res;
         this.next = next;
+
+        this.newUser = undefined;
     }
 
     private validate() {
@@ -75,6 +52,53 @@ class SignUpController {
         });
     }
 
+    private checkUserExist(user: IUserDocument) {
+        if (user) {
+            throw Boom.conflict('Email is already in use').output;
+        }
+        const password = this.req.body.password;
+        delete this.req.body.password;
+        return password;
+    }
+
+    private createUser(password) {
+        this.newUser = new User(this.req.body);
+        this.newUser.createEmailVerifyToken();
+        return this.newUser.cryptPassword(password);
+    }
+
+    private saveUser() {
+        return this.newUser.save();
+    }
+
+    private sendEmailVerification() {
+        const mailOptions = {
+            to: this.newUser.email,
+            from: 'arthur.osipenko@gmail.com',
+            subject: 'Hello on XXX',
+            text: `Hello. This is a token for your account 
+                   ${this.newUser.emailVerifyToken.value}
+                   Please go back and enter it in your profile to verify your email.`
+        };
+        transporter.sendMail(mailOptions, (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    }
+
+    private responseToken() {
+        const token = jwt.sign({
+            'id': this.newUser._id,
+            'user-agent': this.req.headers['user-agent']
+        }, process.env.JWT_SECRET, {
+            algorithm: tokenAlg,
+            expiresIn: `${tokenExp}d`,
+            jwtid: process.env.JWT_ID
+        });
+        this.res.status(200).send({message: 'User is authorized', token});
+    }
+
     private errorHandler(err) {
         if (!err.statusCode || !err.payload) {
             this.next(err);
@@ -83,9 +107,8 @@ class SignUpController {
     }
 }
 
-const signUpController = new SignUpController();
-
 export function signUpHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const signUpController = new SignUpController();
     signUpController.setHandlerParams(req, res, next);
     signUpController.signUpHandler();
 }
