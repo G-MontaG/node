@@ -17,7 +17,15 @@ class SignUpController {
         password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/)
     }).requiredKeys(['email', 'password']);
 
-    public signUpHandler() {
+    public setHandlerParams(req: express.Request, res: express.Response, next: express.NextFunction) {
+        this.req = req;
+        this.res = res;
+        this.next = next;
+
+        this.newUser = undefined;
+    }
+
+    public handler() {
         this.validate();
 
         User.findOne({email: this.req.body.email}).exec()
@@ -27,14 +35,6 @@ class SignUpController {
             .then(this.sendEmailVerification.bind(this))
             .then(this.responseToken.bind(this))
             .catch(this.errorHandler.bind(this));
-    }
-
-    public setHandlerParams(req: express.Request, res: express.Response, next: express.NextFunction) {
-        this.req = req;
-        this.res = res;
-        this.next = next;
-
-        this.newUser = undefined;
     }
 
     private validate() {
@@ -110,5 +110,5 @@ class SignUpController {
 export function signUpHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
     const signUpController = new SignUpController();
     signUpController.setHandlerParams(req, res, next);
-    signUpController.signUpHandler();
+    signUpController.handler();
 }
