@@ -1,14 +1,13 @@
 import _ = require('lodash');
 import express = require('express');
-import { RouterConfiguration } from '../router-configuration';
+import { IRouterConfiguration } from '../router-configuration';
 import { User } from '../../models/user.model';
+import { checkTokenMiddleware } from '../../middlewares/check-token.middleware';
 
 class ApiRouter {
     public routes = express.Router();
-    private readonly configurations: RouterConfiguration[] = [
-        {
-            type: 'get', route: '/test', handler: this.test
-        }
+    private readonly configurations: IRouterConfiguration[] = [
+        {type: 'get', route: '/test', middleware: checkTokenMiddleware, handler: this.test}
     ];
 
     constructor() {
@@ -32,8 +31,8 @@ class ApiRouter {
      *       200:
      *         description: test
      */
-    private test() {
-        console.log('test');
+    private test(req, res, next) {
+        console.log(req.userId);
     }
 }
 

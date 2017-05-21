@@ -1,16 +1,16 @@
 import express = require('express');
 
-export interface RouterConfiguration {
+export interface IRouterConfiguration {
     type: string;
     route: string;
-    handler: HandlerFunction;
-    middleware?: MiddlewareFunction[];
+    handler: IHandlerFunction;
+    middleware?: IMiddlewareFunction[];
 }
 
-export interface HandlerFunction {
+export interface IHandlerFunction {
     (req: express.Request, res: express.Response, next: express.NextFunction);
 }
 
-export interface MiddlewareFunction {
+export interface IMiddlewareFunction {
     (req: express.Request, res: express.Response, next: express.NextFunction);
 }
