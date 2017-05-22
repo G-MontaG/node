@@ -127,7 +127,7 @@ userSchema.methods.cryptPassword = function(password: string): Promise<void> {
     });
 };
 
-userSchema.methods.generateToken = function(password: string): Promise<boolean> {
+userSchema.methods.checkPassword = function(password: string): Promise<boolean> {
     return compareHash(password, this.hash, this.salt).then((result) => {
         return result;
     });

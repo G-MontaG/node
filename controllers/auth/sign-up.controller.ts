@@ -19,7 +19,11 @@ class SignUpController extends BaseController {
     }
 
     public handler() {
-        this.validate();
+        const result = this.validate();
+        if (result) {
+            this.errorHandler(result);
+            return null;
+        }
 
         User.findOne({email: this.req.body.email}).exec()
             .then(this.checkUserExist.bind(this))

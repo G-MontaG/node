@@ -19,7 +19,7 @@ export abstract class BaseController {
     public abstract handler();
 
     protected validate() {
-        Joi.validate(this.req.body, this.schema, (validationError, value) => {
+        return Joi.validate(this.req.body, this.schema, (validationError, value) => {
             if (!validationError) {
                 return null;
             }
@@ -29,7 +29,7 @@ export abstract class BaseController {
                 error: validationError.details,
                 message: validationError.name
             };
-            throw error;
+            return error;
         });
     }
 
@@ -39,4 +39,6 @@ export abstract class BaseController {
         }
         this.res.status(err.statusCode).send(err.payload);
     }
+
+
 }

@@ -12,7 +12,11 @@ class VerifyEmailController extends BaseController {
     }).requiredKeys(['token']);
 
     public handler() {
-        this.validate();
+        const result = this.validate();
+        if (result) {
+            this.errorHandler(result);
+            return null;
+        }
 
         User.findOne({'emailVerifyToken.value': this.req.body.token}).exec()
             .then(this.checkToken.bind(this))
