@@ -6,7 +6,7 @@ import { BaseController } from '../base.controller';
 import { IUserDocument, User } from '../../models/user.model';
 import { transporter } from '../../helpers/constants';
 
-class ForgotEmailHandlerController extends BaseController {
+class ForgotEmailController extends BaseController {
     protected schema = Joi.object().keys({
         email: Joi.string().email()
     }).requiredKeys(['email']);
@@ -66,7 +66,7 @@ class ForgotEmailHandlerController extends BaseController {
     }
 
     private responseToken() {
-        this.res.status(200).send({message: 'Email verified'});
+        this.res.status(200).send({message: 'Token has been sent'});
     }
 }
 
@@ -120,8 +120,8 @@ class ForgotEmailHandlerController extends BaseController {
  *           $ref: '#/definitions/ForgotEmailResponse'
  */
 export function forgotEmailHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const forgotEmailHandlerController = new ForgotEmailHandlerController();
-    forgotEmailHandlerController.setHandlerParams(req, res, next);
-    forgotEmailHandlerController.clearData();
-    forgotEmailHandlerController.handler();
+    const forgotEmailController = new ForgotEmailController();
+    forgotEmailController.setHandlerParams(req, res, next);
+    forgotEmailController.clearData();
+    forgotEmailController.handler();
 }
