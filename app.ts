@@ -25,7 +25,16 @@ const swaggerSpec = swaggerJSDoc({
         info: {
             title: 'Node Swagger API',
             version: '1.0.0',
-            description: 'Demonstrating how to describe a RESTful API with Swagger',
+            description: 'Node swagger',
+            contacts: {
+                name: 'Node',
+                url: 'https://github.com/G-MontaG/node',
+                email: 'arthur.osipenko@gmail.com'
+            },
+            license: {
+                name: 'MIT',
+                url: 'https://github.com/G-MontaG/node/blob/master/LICENSE'
+            }
         },
         host: 'localhost:3000',
         basePath: '/',
@@ -49,10 +58,9 @@ class Server {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({extended: true}));
         this.app.use(cookieParser());
-        // this.app.use(expressValidator());
         this.app.use(compress(6));
-        this.app.use(cors());
         this.app.use(helmet());
+        this.app.use(cors());
 
         this.app.use(express.static(publicDir));
 

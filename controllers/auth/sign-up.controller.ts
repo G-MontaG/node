@@ -83,6 +83,48 @@ class SignUpController extends BaseController {
     }
 }
 
+/**
+ * @swagger
+ * definitions:
+ *   SignUp:
+ *     type: 'object'
+ *     properties:
+ *       email:
+ *         type: 'string'
+ *       password:
+ *         type: 'string'
+ *         minLength: 3
+ *         maxLength: 30
+ *     required:
+ *     - email
+ *     - password
+ */
+
+/**
+ * @swagger
+ * /auth/sign-up:
+ *   post:
+ *     summary: 'Sign-up to the application'
+ *     description: ''
+ *     tags: [Auth]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: 'body'
+ *         name: 'body'
+ *         description: ''
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/SignUp'
+ *     responses:
+ *       200:
+ *         description: 'Sign-up successful'
+ *         schema:
+ *           type: 'object'
+ *           $ref: '#/definitions/AuthTokenResponse'
+ */
 export function signUpHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
     const signUpController = new SignUpController();
     signUpController.setHandlerParams(req, res, next);

@@ -42,6 +42,57 @@ class VerifyEmailController extends BaseController {
     }
 }
 
+/**
+ * @swagger
+ * definitions:
+ *   VerifyEmail:
+ *     type: 'object'
+ *     properties:
+ *       token:
+ *         type: 'string'
+ *     required:
+ *     - token
+ */
+
+/**
+ * @swagger
+ * definitions:
+ *   VerifyEmailResponse:
+ *     type: 'object'
+ *     properties:
+ *       message:
+ *         type: 'string'
+ *     required:
+ *     - message
+ */
+
+/**
+ * @swagger
+ * /auth/verify-email:
+ *   post:
+ *     summary: 'Verify user email'
+ *     description: ''
+ *     tags: [Auth]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: 'body'
+ *         name: 'body'
+ *         description: ''
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/VerifyEmail'
+ *     responses:
+ *       200:
+ *         description: 'Verify email successful'
+ *         schema:
+ *           type: 'object'
+ *           $ref: '#/definitions/VerifyEmailResponse'
+ *     security:
+ *       - Authorization: []
+ */
 export function verifyEmailHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
     const verifyEmailController = new VerifyEmailController();
     verifyEmailController.setHandlerParams(req, res, next);

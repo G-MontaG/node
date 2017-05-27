@@ -67,6 +67,48 @@ class LoginController extends BaseController {
     }
 }
 
+/**
+ * @swagger
+ * definitions:
+ *   Login:
+ *     type: 'object'
+ *     properties:
+ *       email:
+ *         type: 'string'
+ *       password:
+ *         type: 'string'
+ *         minLength: 3
+ *         maxLength: 30
+ *     required:
+ *     - email
+ *     - password
+ */
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: 'Login to the application'
+ *     description: ''
+ *     tags: [Auth]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: 'body'
+ *         name: 'body'
+ *         description: ''
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/Login'
+ *     responses:
+ *       200:
+ *         description: 'Login successful'
+ *         schema:
+ *           type: 'object'
+ *           $ref: '#/definitions/AuthTokenResponse'
+ */
 export function loginHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
     const loginController = new LoginController();
     loginController.setHandlerParams(req, res, next);

@@ -70,6 +70,55 @@ class ForgotEmailHandlerController extends BaseController {
     }
 }
 
+/**
+ * @swagger
+ * definitions:
+ *   ForgotEmail:
+ *     type: 'object'
+ *     properties:
+ *       email:
+ *         type: 'string'
+ *     required:
+ *     - email
+ */
+
+/**
+ * @swagger
+ * definitions:
+ *   ForgotEmailResponse:
+ *     type: 'object'
+ *     properties:
+ *       message:
+ *         type: 'string'
+ *     required:
+ *     - message
+ */
+
+/**
+ * @swagger
+ * /auth/forgot/email:
+ *   post:
+ *     summary: 'Forgot password, send email to verify user existing'
+ *     description: ''
+ *     tags: [Auth]
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: 'body'
+ *         name: 'body'
+ *         description: ''
+ *         required: true
+ *         schema:
+ *           $ref: '#/definitions/ForgotEmail'
+ *     responses:
+ *       200:
+ *         description: 'Verify email successful'
+ *         schema:
+ *           type: 'object'
+ *           $ref: '#/definitions/ForgotEmailResponse'
+ */
 export function forgotEmailHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
     const forgotEmailHandlerController = new ForgotEmailHandlerController();
     forgotEmailHandlerController.setHandlerParams(req, res, next);

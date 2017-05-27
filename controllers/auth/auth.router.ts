@@ -27,4 +27,33 @@ class AuthRouter {
     }
 }
 
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: 'Application authorization'
+ */
+
+/**
+ * @swagger
+ * securityDefinitions:
+ *   Authorization:
+ *     type: 'apiKey'
+ *     name: 'Authorization'
+ *     in: 'header'
+ */
+
+/**
+ * @swagger
+ * definitions:
+ *   AuthTokenResponse:
+ *     required:
+ *       - message
+ *       - token
+ *     properties:
+ *       message:
+ *         type: string
+ *       token:
+ *         type: string
+ */
 export const authRouter = new AuthRouter();
