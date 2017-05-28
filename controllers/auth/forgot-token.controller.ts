@@ -9,8 +9,9 @@ import { tokenAlg, tokenExp } from '../../helpers/constants';
 
 class ForgotTokenController extends BaseController {
     protected schema = Joi.object().keys({
+        email: Joi.string().email(),
         token: Joi.string().length(8),
-    }).requiredKeys(['token']);
+    }).requiredKeys(['email', 'token']);
 
     private user: IUserDocument;
 
@@ -25,7 +26,7 @@ class ForgotTokenController extends BaseController {
             return null;
         }
 
-        User.findOne({'forgotPasswordToken.value': this.req.body.token}).exec()
+        User.findOne({email: this.req.body.email}).exec()
             .then(this.checkToken.bind(this))
             .then(this.response.bind(this))
             .catch(this.errorHandler.bind(this));
@@ -33,7 +34,7 @@ class ForgotTokenController extends BaseController {
 
     private checkToken(user: IUserDocument) {
         delete this.req.body.token;
-        if (!user) {
+        if (!user || !user.forgotPasswordToken) {
             throw Boom.badRequest('Token not found').output;
         } else if (moment() > moment.unix(user.forgotPasswordToken.exp)) {
             throw Boom.badRequest('Token expired').output;
@@ -65,8 +66,11 @@ class ForgotTokenController extends BaseController {
  *     properties:
  *       token:
  *         type: 'string'
+ *       email:
+ *         type: 'string'
  *     required:
  *     - token
+ *     - email
  */
 
 /**
