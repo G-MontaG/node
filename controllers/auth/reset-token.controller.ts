@@ -93,8 +93,23 @@ class ResetTokenController extends BaseController {
  *     properties:
  *       token:
  *         type: 'string'
+ *       old_password:
+ *         type: 'string'
+ *         minLength: 3
+ *         maxLength: 30
+ *       password:
+ *         type: 'string'
+ *         minLength: 3
+ *         maxLength: 30
+ *       confirm_password:
+ *         type: 'string'
+ *         minLength: 3
+ *         maxLength: 30
  *     required:
  *     - token
+ *     - old_password
+ *     - password
+ *     - confirm_password
  */
 
 /**
@@ -113,7 +128,7 @@ class ResetTokenController extends BaseController {
  * @swagger
  * /auth/reset/token:
  *   post:
- *     summary: 'Reset password, verify token from email'
+ *     summary: 'Reset password, verify token from email and set new password'
  *     description: ''
  *     tags: [Auth]
  *     consumes:
@@ -129,7 +144,7 @@ class ResetTokenController extends BaseController {
  *           $ref: '#/definitions/ResetToken'
  *     responses:
  *       200:
- *         description: 'Verify token successful'
+ *         description: 'Verify token and set new password successful'
  *         schema:
  *           type: 'object'
  *           $ref: '#/definitions/ResetTokenResponse'
