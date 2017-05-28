@@ -11,7 +11,7 @@ class ForgotPasswordController extends BaseController {
 
     protected schema = Joi.object().keys({
         password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
-        confirm_password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/)
+        confirm_password: Joi.string().valid(Joi.ref('password'))
     }).requiredKeys(['password', 'confirm_password']);
 
     private user: IUserDocument;
