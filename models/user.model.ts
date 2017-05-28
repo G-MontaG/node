@@ -8,8 +8,8 @@ import {
     forgotPasswordTokenExp,
     forgotPasswordTokenLength,
     passwordMinLength,
-    passwordResetTokenExp,
-    passwordResetTokenLength
+    resetPasswordTokenExp,
+    resetPasswordTokenLength
 } from '../helpers/constants';
 const Schema = mongoose.Schema;
 
@@ -22,7 +22,7 @@ const userSchema = new Schema({
         value: {type: String},
         exp: {type: Number}
     },
-    passwordResetToken: {
+    resetPasswordToken: {
         value: {type: String},
         exp: {type: Number}
     },
@@ -52,7 +52,7 @@ export interface IUserDocument extends mongoose.Document {
         value: string,
         exp: number
     };
-    passwordResetToken: {
+    resetPasswordToken: {
         value: string,
         exp: number
     };
@@ -75,13 +75,10 @@ export interface IUserDocument extends mongoose.Document {
     checkPassword(password: string): Promise<boolean>;
     createPassword(): string;
     createEmailVerifyToken();
-    checkEmailConfirmation(token: string): boolean;
     setEmailConfirmed(): void;
-    createPasswordResetToken();
-    checkPasswordResetToken(token: string): boolean;
-    setPasswordResetTokenUsed(): void;
+    createResetPasswordToken();
+    setResetPasswordTokenUsed(): void;
     createForgotPasswordToken();
-    checkForgotPasswordToken(token: string): boolean;
     setForgotPasswordTokenUsed(): void;
 }
 
@@ -147,38 +144,20 @@ userSchema.methods.createEmailVerifyToken = function() {
     };
 };
 
-userSchema.methods.checkEmailConfirmation = function(token: string): boolean {
-    if (!this.emailVerifyToken) {
-        return false;
-    } else if (moment(this.emailVerifyToken.exp) < moment()) {
-        return false;
-    }
-    return this.emailVerifyToken.value === token;
-};
-
 userSchema.methods.setEmailConfirmed = function(): void {
     this.emailConfirmed = true;
     this.emailVerifyToken = undefined;
 };
 
-userSchema.methods.createPasswordResetToken = function() {
-    this.passwordResetToken = {
-        value: crypto.randomBytes(64).toString('base64').slice(0, passwordResetTokenLength),
-        exp: moment().add(passwordResetTokenExp, 'hours').unix()
+userSchema.methods.createResetPasswordToken = function() {
+    this.resetPasswordToken = {
+        value: crypto.randomBytes(64).toString('base64').slice(0, resetPasswordTokenLength),
+        exp: moment().add(resetPasswordTokenExp, 'hours').unix()
     };
 };
 
-userSchema.methods.checkPasswordResetToken = function(token: string): boolean {
-    if (!this.passwordResetToken) {
-        return false;
-    } else if (moment(this.passwordResetToken.exp) < moment()) {
-        return false;
-    }
-    return this.passwordResetToken.value === token;
-};
-
-userSchema.methods.setPasswordResetTokenUsed = function(): void {
-    this.passwordResetToken = undefined;
+userSchema.methods.setResetPasswordTokenUsed = function(): void {
+    this.resetPasswordToken = undefined;
 };
 
 userSchema.methods.createForgotPasswordToken = function() {
@@ -186,15 +165,6 @@ userSchema.methods.createForgotPasswordToken = function() {
         value: crypto.randomBytes(64).toString('base64').slice(0, forgotPasswordTokenLength),
         exp: moment().add(forgotPasswordTokenExp, 'hours').unix()
     };
-};
-
-userSchema.methods.checkForgotPasswordToken = function(token: string): boolean {
-    if (!this.forgotPasswordToken) {
-        return false;
-    } else if (moment(this.forgotPasswordToken.exp) < moment()) {
-        return false;
-    }
-    return this.forgotPasswordToken.value === token;
 };
 
 userSchema.methods.setForgotPasswordTokenUsed = function(): void {

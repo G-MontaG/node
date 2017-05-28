@@ -39,7 +39,7 @@ class ForgotTokenController extends BaseController {
         } else if (moment() > moment.unix(user.forgotPasswordToken.exp)) {
             throw Boom.badRequest('Token expired').output;
         } else {
-            user.forgotPasswordToken = undefined;
+            user.setForgotPasswordTokenUsed();
             this.user = user;
             return user.save();
         }

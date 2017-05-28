@@ -8,7 +8,7 @@ export abstract class BaseController {
     protected res: express.Response;
     protected next: express.NextFunction;
 
-    protected abstract schema: Joi;
+    protected schema: Joi;
 
     public setHandlerParams(req: express.Request, res: express.Response, next: express.NextFunction) {
         this.req = req;
@@ -39,6 +39,4 @@ export abstract class BaseController {
         }
         this.res.status(err.statusCode).send(err.payload);
     }
-
-
 }

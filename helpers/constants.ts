@@ -10,8 +10,8 @@ export const tokenExp = 7; // days
 export const emailConfirmTokenLength = 8; // must be integer
 export const emailConfirmTokenExp = 0.5; // hours
 
-export const passwordResetTokenLength = 8;
-export const passwordResetTokenExp = 0.5;
+export const resetPasswordTokenLength = 8;
+export const resetPasswordTokenExp = 0.5;
 
 export const forgotPasswordTokenLength = 8;
 export const forgotPasswordTokenExp = 0.5;

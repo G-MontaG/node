@@ -6,11 +6,10 @@ import winston = require('winston');
 import { BaseController } from '../base.controller';
 import { IUserDocument, User } from '../../models/user.model';
 import { transporter } from '../../helpers/constants';
+import { IRequestWithUserId } from '../request.interface';
 
-class ForgotEmailController extends BaseController {
-    protected schema = Joi.object().keys({
-        email: Joi.string().email()
-    }).requiredKeys(['email']);
+class ResetEmailController extends BaseController {
+    protected req: IRequestWithUserId;
 
     private user: IUserDocument;
 
@@ -19,45 +18,38 @@ class ForgotEmailController extends BaseController {
     }
 
     public handler() {
-        const result = this.validate();
-        if (result) {
-            this.errorHandler(result);
-            return null;
-        }
-
-        User.findOne({email: this.req.body.email}).exec()
+        User.findById(this.req.userId).exec()
             .then(this.checkUserExist.bind(this))
             .then(this.generateToken.bind(this))
             .then(this.saveUser.bind(this))
-            .then(this.sendForgotEmailVerification.bind(this))
+            .then(this.sendResetEmailVerification.bind(this))
             .then(this.responseToken.bind(this))
             .catch(this.errorHandler.bind(this));
     }
 
     private checkUserExist(user: IUserDocument) {
-        delete this.req.body.email;
         if (!user) {
-            throw Boom.badRequest('Email not found').output;
+            throw Boom.unauthorized('User not found').output;
         }
         this.user = user;
     }
 
     private generateToken() {
-        return this.user.createForgotPasswordToken();
+        return this.user.createResetPasswordToken();
     }
 
     private saveUser() {
         return this.user.save();
     }
 
-    private sendForgotEmailVerification() {
+    private sendResetEmailVerification() {
         const mailOptions = {
             to: this.user.email,
             from: 'arthur.osipenko@gmail.com',
-            subject: 'Forgot password',
+            subject: 'Reset password',
             text: `Hello. This is a token for your account 
                    ${this.user.forgotPasswordToken.value}
-                   Please go back and enter it in forgot password form.`
+                   Please go back and enter it in reset password form.`
         };
         transporter.sendMail(mailOptions, (err) => {
             if (err) {
@@ -74,19 +66,7 @@ class ForgotEmailController extends BaseController {
 /**
  * @swagger
  * definitions:
- *   ForgotEmail:
- *     type: 'object'
- *     properties:
- *       email:
- *         type: 'string'
- *     required:
- *     - email
- */
-
-/**
- * @swagger
- * definitions:
- *   ForgotEmailResponse:
+ *   ResetEmailResponse:
  *     type: 'object'
  *     properties:
  *       message:
@@ -97,32 +77,25 @@ class ForgotEmailController extends BaseController {
 
 /**
  * @swagger
- * /auth/forgot/email:
+ * /auth/reset/email:
  *   post:
- *     summary: 'Forgot password, send email token to verify user existing'
+ *     summary: 'Reset password, send email token to verify user existing'
  *     description: ''
  *     tags: [Auth]
  *     consumes:
  *       - application/json
  *     produces:
  *       - application/json
- *     parameters:
- *       - in: 'body'
- *         name: 'body'
- *         description: ''
- *         required: true
- *         schema:
- *           $ref: '#/definitions/ForgotEmail'
  *     responses:
  *       200:
- *         description: 'Verify email and send token successful'
+ *         description: 'Send email token successful'
  *         schema:
  *           type: 'object'
- *           $ref: '#/definitions/ForgotEmailResponse'
+ *           $ref: '#/definitions/ResetEmailResponse'
  */
-export function forgotEmailHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const forgotEmailController = new ForgotEmailController();
-    forgotEmailController.setHandlerParams(req, res, next);
-    forgotEmailController.clearData();
-    forgotEmailController.handler();
+export function resetEmailHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const resetEmailController = new ResetEmailController();
+    resetEmailController.setHandlerParams(req, res, next);
+    resetEmailController.clearData();
+    resetEmailController.handler();
 }

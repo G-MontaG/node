@@ -6,13 +6,14 @@ import { BaseController } from '../base.controller';
 import { IUserDocument, User } from '../../models/user.model';
 import { IRequestWithUserId } from '../request.interface';
 
-class ForgotPasswordController extends BaseController {
+class ResetPasswordController extends BaseController {
     protected req: IRequestWithUserId;
 
     protected schema = Joi.object().keys({
+        old_password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
         password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
         confirm_password: Joi.string().valid(Joi.ref('password'))
-    }).requiredKeys(['password', 'confirm_password']);
+    }).requiredKeys(['old_password', 'password', 'confirm_password']);
 
     private user: IUserDocument;
 
@@ -29,6 +30,8 @@ class ForgotPasswordController extends BaseController {
 
         User.findById(this.req.userId).exec()
             .then(this.checkUserExist.bind(this))
+            .then(this.checkPassword.bind(this))
+            .then(this.verifyResult.bind(this))
             .then(this.cryptPassword.bind(this))
             .then(this.saveUser.bind(this))
             .then(this.responseToken.bind(this))
@@ -37,9 +40,23 @@ class ForgotPasswordController extends BaseController {
 
     private checkUserExist(user: IUserDocument) {
         if (!user) {
+            delete this.req.body.old_password;
             throw Boom.unauthorized('User not found').output;
         }
+        const oldPassword = this.req.body.old_password;
+        delete this.req.body.old_password;
         this.user = user;
+        return oldPassword;
+    }
+
+    private checkPassword(password) {
+        return this.user.checkPassword(password);
+    }
+
+    private verifyResult(result) {
+        if (!result) {
+            throw Boom.badRequest('Incorrect password').output;
+        }
     }
 
     private cryptPassword() {
@@ -60,9 +77,13 @@ class ForgotPasswordController extends BaseController {
 /**
  * @swagger
  * definitions:
- *   ForgotPassword:
+ *   ResetPassword:
  *     type: 'object'
  *     properties:
+ *       old_password:
+ *         type: 'string'
+ *         minLength: 3
+ *         maxLength: 30
  *       password:
  *         type: 'string'
  *         minLength: 3
@@ -79,7 +100,7 @@ class ForgotPasswordController extends BaseController {
 /**
  * @swagger
  * definitions:
- *   ForgotPasswordResponse:
+ *   ResetPasswordResponse:
  *     type: 'object'
  *     properties:
  *       message:
@@ -92,7 +113,7 @@ class ForgotPasswordController extends BaseController {
  * @swagger
  * /auth/forgot/password:
  *   post:
- *     summary: 'Forgot password, send new password and save it'
+ *     summary: 'Reset password, send new password and save it'
  *     description: ''
  *     tags: [Auth]
  *     consumes:
@@ -105,17 +126,17 @@ class ForgotPasswordController extends BaseController {
  *         description: ''
  *         required: true
  *         schema:
- *           $ref: '#/definitions/ForgotPassword'
+ *           $ref: '#/definitions/ResetPassword'
  *     responses:
  *       200:
  *         description: 'Set new password successful'
  *         schema:
  *           type: 'object'
- *           $ref: '#/definitions/ForgotPasswordResponse'
+ *           $ref: '#/definitions/ResetPasswordResponse'
  */
-export function forgotPasswordHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const forgotPasswordController = new ForgotPasswordController();
-    forgotPasswordController.setHandlerParams(req, res, next);
-    forgotPasswordController.clearData();
-    forgotPasswordController.handler();
+export function resetPasswordHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const resetPasswordController = new ResetPasswordController();
+    resetPasswordController.setHandlerParams(req, res, next);
+    resetPasswordController.clearData();
+    resetPasswordController.handler();
 }

@@ -5,14 +5,21 @@ import Boom = require('boom');
 import Joi = require('joi');
 import { BaseController } from '../base.controller';
 import { IUserDocument, User } from '../../models/user.model';
+import { tokenAlg, tokenExp } from '../../helpers/constants';
 import { IRequestWithUserId } from '../request.interface';
 
-class VerifyEmailController extends BaseController {
+class ResetTokenController extends BaseController {
     protected req: IRequestWithUserId;
 
     protected schema = Joi.object().keys({
         token: Joi.string().length(8),
     }).requiredKeys(['token']);
+
+    private user: IUserDocument;
+
+    public clearData() {
+        this.user = undefined;
+    }
 
     public handler() {
         const result = this.validate();
@@ -29,27 +36,26 @@ class VerifyEmailController extends BaseController {
 
     private checkToken(user: IUserDocument) {
         delete this.req.body.token;
-        if (!user) {
-            throw Boom.unauthorized('User not found').output;
-        } else if (!user.emailVerifyToken) {
+        if (!user || !user.resetPasswordToken) {
             throw Boom.badRequest('Token not found').output;
-        } else if (moment() > moment.unix(user.emailVerifyToken.exp)) {
+        } else if (moment() > moment.unix(user.resetPasswordToken.exp)) {
             throw Boom.badRequest('Token expired').output;
         } else {
-            user.setEmailConfirmed();
+            user.setResetPasswordTokenUsed();
+            this.user = user;
             return user.save();
         }
     }
 
     private response() {
-        this.res.status(200).send({message: 'Email is confirmed'});
+        this.res.status(200).send({message: 'Token is valid'});
     }
 }
 
 /**
  * @swagger
  * definitions:
- *   VerifyEmail:
+ *   ResetToken:
  *     type: 'object'
  *     properties:
  *       token:
@@ -61,7 +67,7 @@ class VerifyEmailController extends BaseController {
 /**
  * @swagger
  * definitions:
- *   VerifyEmailResponse:
+ *   ResetTokenResponse:
  *     type: 'object'
  *     properties:
  *       message:
@@ -72,9 +78,9 @@ class VerifyEmailController extends BaseController {
 
 /**
  * @swagger
- * /auth/verify-email:
+ * /auth/reset/token:
  *   post:
- *     summary: 'Verify user email'
+ *     summary: 'Reset password, verify token from email'
  *     description: ''
  *     tags: [Auth]
  *     consumes:
@@ -87,18 +93,17 @@ class VerifyEmailController extends BaseController {
  *         description: ''
  *         required: true
  *         schema:
- *           $ref: '#/definitions/VerifyEmail'
+ *           $ref: '#/definitions/ResetToken'
  *     responses:
  *       200:
- *         description: 'Verify email successful'
+ *         description: 'Verify token successful'
  *         schema:
  *           type: 'object'
- *           $ref: '#/definitions/VerifyEmailResponse'
- *     security:
- *       - Authorization: []
+ *           $ref: '#/definitions/ResetTokenResponse'
  */
-export function verifyEmailHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const verifyEmailController = new VerifyEmailController();
-    verifyEmailController.setHandlerParams(req, res, next);
-    verifyEmailController.handler();
+export function resetTokenHandler(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const resetTokenController = new ResetTokenController();
+    resetTokenController.setHandlerParams(req, res, next);
+    resetTokenController.clearData();
+    resetTokenController.handler();
 }
