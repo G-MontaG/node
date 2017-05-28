@@ -3,6 +3,7 @@ import jwt = require('jsonwebtoken');
 import Boom = require('boom');
 import Joi = require('joi');
 import winston = require('winston');
+import moment = require('moment');
 import { BaseController } from '../base.controller';
 import { IUserDocument, User } from '../../models/user.model';
 import { transporter } from '../../helpers/constants';
@@ -30,6 +31,8 @@ class ResetEmailController extends BaseController {
     private checkUserExist(user: IUserDocument) {
         if (!user) {
             throw Boom.unauthorized('User not found').output;
+        } else if (user.resetPasswordToken && moment() < moment.unix(user.resetPasswordToken.exp)) {
+            throw Boom.badRequest('Email was send').output;
         }
         this.user = user;
     }
@@ -48,7 +51,7 @@ class ResetEmailController extends BaseController {
             from: 'arthur.osipenko@gmail.com',
             subject: 'Reset password',
             text: `Hello. This is a token for your account 
-                   ${this.user.forgotPasswordToken.value}
+                   ${this.user.resetPasswordToken.value}
                    Please go back and enter it in reset password form.`
         };
         transporter.sendMail(mailOptions, (err) => {

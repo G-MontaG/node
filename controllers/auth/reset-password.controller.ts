@@ -111,7 +111,7 @@ class ResetPasswordController extends BaseController {
 
 /**
  * @swagger
- * /auth/forgot/password:
+ * /auth/reset/password:
  *   post:
  *     summary: 'Reset password, send new password and save it'
  *     description: ''

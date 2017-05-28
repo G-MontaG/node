@@ -3,6 +3,7 @@ import jwt = require('jsonwebtoken');
 import Boom = require('boom');
 import Joi = require('joi');
 import winston = require('winston');
+import moment = require('moment');
 import { BaseController } from '../base.controller';
 import { IUserDocument, User } from '../../models/user.model';
 import { transporter } from '../../helpers/constants';
@@ -38,6 +39,8 @@ class ForgotEmailController extends BaseController {
         delete this.req.body.email;
         if (!user) {
             throw Boom.badRequest('Email not found').output;
+        } else if (user.forgotPasswordToken && moment() < moment.unix(user.forgotPasswordToken.exp)) {
+            throw Boom.badRequest('Email was send').output;
         }
         this.user = user;
     }
