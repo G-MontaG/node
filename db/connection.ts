@@ -1,9 +1,8 @@
-'use strict';
-
-// connection string format: 'mongodb://username:password@localhost:27017/test';
 import mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+import winston = require('winston');
 
+// connection string format: 'mongodb://username:password@localhost:27017/test';
 class MongodbConnection {
     private connectionUrlParts: string[] = [];
     private connectionUrl: string;
@@ -32,25 +31,25 @@ class MongodbConnection {
 
     private subscribeToMongoEvents(connection) {
         connection.on('connected', () => {
-            console.log('Mongoose connected');
+            winston.log('info', `Mongoose connected`);
         });
         connection.on('open', () => {
-            console.log('Mongoose connection opened');
+            winston.log('info', `Mongoose connection opened`);
         });
         connection.on('disconnecting', () => {
-            console.log('Mongoose disconnecting');
+            winston.log('info', 'Mongoose disconnecting');
         });
         connection.on('db: disconnected', () => {
-            console.log('Mongoose disconnected');
+            winston.log('info', 'Mongoose disconnected');
         });
         connection.on('close', () => {
-            console.log('Mongoose connection closed');
+            winston.log('info', 'Mongoose connection closed');
         });
         connection.on('reconnected', () => {
-            console.log('Mongoose reconnected');
+            winston.log('info', 'Mongoose reconnected');
         });
         connection.on('error', (error) => {
-            console.error(error.message);
+            winston.log('error', error.message);
         });
     }
 }

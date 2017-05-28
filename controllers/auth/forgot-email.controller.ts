@@ -2,6 +2,7 @@ import express = require('express');
 import jwt = require('jsonwebtoken');
 import Boom = require('boom');
 import Joi = require('joi');
+import winston = require('winston');
 import { BaseController } from '../base.controller';
 import { IUserDocument, User } from '../../models/user.model';
 import { transporter } from '../../helpers/constants';
@@ -60,7 +61,7 @@ class ForgotEmailController extends BaseController {
         };
         transporter.sendMail(mailOptions, (err) => {
             if (err) {
-                console.error(err);
+                winston.log('error', err);
             }
         });
     }

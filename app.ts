@@ -10,6 +10,8 @@ import helmet = require('helmet');
 import dotenv = require('dotenv');
 dotenv.config({path: '.env'});
 
+import winston = require('winston');
+
 import multer = require('multer');
 const upload = multer({dest: path.join(__dirname, 'uploads')});
 
@@ -68,7 +70,7 @@ class Server {
         this.configureErrorHandler();
 
         this.app.listen(this.app.get('port'), () => {
-            console.log(`Server listening on port ${this.app.get('port')} in ${this.app.get('env')} mode`);
+            winston.log('info', `Server listening on port ${this.app.get('port')} in ${this.app.get('env')} mode`);
         });
     }
 
@@ -83,7 +85,8 @@ class Server {
 
     private configureErrorHandler() {
         this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-            console.error(err.stack);
+            winston.log('error', `${req.method} ${req.path} [${err.status}] - ${err.message}`);
+            winston.log('error', err.stack);
             res.status(err.status || 500).send({
                 message: err.message || err.name,
                 error: err.toString()
