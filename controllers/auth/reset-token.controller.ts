@@ -13,7 +13,10 @@ class ResetTokenController extends BaseController {
 
     protected schema = Joi.object().keys({
         token: Joi.string().length(8),
-    }).requiredKeys(['token']);
+        old_password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
+        password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
+        confirm_password: Joi.string().valid(Joi.ref('password'))
+    }).requiredKeys(['token', 'old_password', 'password', 'confirm_password']);
 
     private user: IUserDocument;
 
@@ -30,6 +33,10 @@ class ResetTokenController extends BaseController {
 
         User.findById(this.req.userId).exec()
             .then(this.checkToken.bind(this))
+            .then(this.checkPassword.bind(this))
+            .then(this.verifyResult.bind(this))
+            .then(this.cryptPassword.bind(this))
+            .then(this.saveUser.bind(this))
             .then(this.response.bind(this))
             .catch(this.errorHandler.bind(this));
     }
@@ -46,12 +53,35 @@ class ResetTokenController extends BaseController {
         } else {
             user.setResetPasswordTokenUsed();
             this.user = user;
-            return user.save();
         }
     }
 
+    private checkPassword() {
+        return this.user.checkPassword(this.req.body.old_password);
+    }
+
+    private verifyResult(result) {
+        if (!result) {
+            delete this.req.body.old_password;
+            delete this.req.body.password;
+            delete this.req.body.confirm_password;
+            throw Boom.badRequest('Incorrect password').output;
+        }
+    }
+
+    private cryptPassword() {
+        return this.user.cryptPassword(this.req.body.password);
+    }
+
+    private saveUser() {
+        delete this.req.body.old_password;
+        delete this.req.body.password;
+        delete this.req.body.confirm_password;
+        return this.user.save();
+    }
+
     private response() {
-        this.res.status(200).send({message: 'Token is valid'});
+        this.res.status(200).send({message: 'Password has been changed'});
     }
 }
 

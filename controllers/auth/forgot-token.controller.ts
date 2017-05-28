@@ -11,7 +11,9 @@ class ForgotTokenController extends BaseController {
     protected schema = Joi.object().keys({
         email: Joi.string().email(),
         token: Joi.string().length(8),
-    }).requiredKeys(['email', 'token']);
+        password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/),
+        confirm_password: Joi.string().valid(Joi.ref('password'))
+    }).requiredKeys(['email', 'token', 'password', 'confirm_password']);
 
     private user: IUserDocument;
 
@@ -28,6 +30,8 @@ class ForgotTokenController extends BaseController {
 
         User.findOne({email: this.req.body.email}).exec()
             .then(this.checkToken.bind(this))
+            .then(this.cryptPassword.bind(this))
+            .then(this.saveUser.bind(this))
             .then(this.response.bind(this))
             .catch(this.errorHandler.bind(this));
     }
@@ -35,6 +39,7 @@ class ForgotTokenController extends BaseController {
     private checkToken(user: IUserDocument) {
         const token = this.req.body.token;
         delete this.req.body.token;
+        delete this.req.body.email;
         if (!user || !user.forgotPasswordToken) {
             throw Boom.badRequest('Token not found').output;
         } else if (user.forgotPasswordToken.value !== token) {
@@ -44,8 +49,17 @@ class ForgotTokenController extends BaseController {
         } else {
             user.setForgotPasswordTokenUsed();
             this.user = user;
-            return user.save();
         }
+    }
+
+    private cryptPassword() {
+        return this.user.cryptPassword(this.req.body.password);
+    }
+
+    private saveUser() {
+        delete this.req.body.password;
+        delete this.req.body.confirm_password;
+        return this.user.save();
     }
 
     private response() {
@@ -57,7 +71,7 @@ class ForgotTokenController extends BaseController {
             expiresIn: `${tokenExp}d`,
             jwtid: process.env.JWT_ID
         });
-        this.res.status(200).send({message: 'Token is valid', token});
+        this.res.status(200).send({message: 'Password has been changed', token});
     }
 }
 
@@ -71,9 +85,19 @@ class ForgotTokenController extends BaseController {
  *         type: 'string'
  *       email:
  *         type: 'string'
+ *       password:
+ *         type: 'string'
+ *         minLength: 3
+ *         maxLength: 30
+ *       confirm_password:
+ *         type: 'string'
+ *         minLength: 3
+ *         maxLength: 30
  *     required:
  *     - token
  *     - email
+ *     - password
+ *     - confirm_password
  */
 
 /**
@@ -95,7 +119,7 @@ class ForgotTokenController extends BaseController {
  * @swagger
  * /auth/forgot/token:
  *   post:
- *     summary: 'Forgot password, verify token from email'
+ *     summary: 'Forgot password, verify token from email and set new password'
  *     description: ''
  *     tags: [Auth]
  *     consumes:
@@ -111,7 +135,7 @@ class ForgotTokenController extends BaseController {
  *           $ref: '#/definitions/ForgotToken'
  *     responses:
  *       200:
- *         description: 'Verify token successful'
+ *         description: 'Verify token and set new password successful'
  *         schema:
  *           type: 'object'
  *           $ref: '#/definitions/ForgotTokenResponse'
