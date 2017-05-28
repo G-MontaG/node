@@ -35,8 +35,11 @@ class ResetTokenController extends BaseController {
     }
 
     private checkToken(user: IUserDocument) {
+        const token = this.req.body.token;
         delete this.req.body.token;
         if (!user || !user.resetPasswordToken) {
+            throw Boom.badRequest('Token not found').output;
+        } else if (user.resetPasswordToken.value !== token) {
             throw Boom.badRequest('Token not found').output;
         } else if (moment() > moment.unix(user.resetPasswordToken.exp)) {
             throw Boom.badRequest('Token expired').output;
