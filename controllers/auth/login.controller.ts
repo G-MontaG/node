@@ -35,6 +35,8 @@ class LoginController extends BaseController {
 
     private checkUserExist(user: IUserDocument) {
         if (!user) {
+            delete this.req.body.password;
+            delete this.req.body.email;
             throw Boom.unauthorized('Email not found').output;
         }
         const password = this.req.body.password;

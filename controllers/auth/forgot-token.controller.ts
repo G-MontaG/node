@@ -32,12 +32,12 @@ class ForgotTokenController extends BaseController {
     }
 
     private checkToken(user: IUserDocument) {
+        delete this.req.body.token;
         if (!user) {
             throw Boom.badRequest('Token not found').output;
         } else if (moment() > moment.unix(user.forgotPasswordToken.exp)) {
             throw Boom.badRequest('Token expired').output;
         } else {
-            delete this.req.body.token;
             user.forgotPasswordToken = undefined;
             this.user = user;
             return user.save();
@@ -88,7 +88,7 @@ class ForgotTokenController extends BaseController {
  * @swagger
  * /auth/forgot/token:
  *   post:
- *     summary: 'Forgot password, verify token from email token'
+ *     summary: 'Forgot password, verify token from email'
  *     description: ''
  *     tags: [Auth]
  *     consumes:

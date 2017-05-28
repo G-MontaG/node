@@ -34,10 +34,10 @@ class ForgotEmailController extends BaseController {
     }
 
     private checkUserExist(user: IUserDocument) {
+        delete this.req.body.email;
         if (!user) {
             throw Boom.badRequest('Email not found').output;
         }
-        delete this.req.body.email;
         this.user = user;
     }
 

@@ -5,8 +5,11 @@ import Boom = require('boom');
 import Joi = require('joi');
 import { BaseController } from '../base.controller';
 import { IUserDocument, User } from '../../models/user.model';
+import { IRequestWithUserId } from '../request.interface';
 
 class VerifyEmailController extends BaseController {
+    protected req: IRequestWithUserId;
+
     protected schema = Joi.object().keys({
         token: Joi.string().length(8),
     }).requiredKeys(['token']);
@@ -18,19 +21,21 @@ class VerifyEmailController extends BaseController {
             return null;
         }
 
-        User.findOne({'emailVerifyToken.value': this.req.body.token}).exec()
+        User.findById(this.req.userId).exec()
             .then(this.checkToken.bind(this))
             .then(this.response.bind(this))
             .catch(this.errorHandler.bind(this));
     }
 
     private checkToken(user: IUserDocument) {
+        delete this.req.body.token;
         if (!user) {
+            throw Boom.unauthorized('User not found').output;
+        } else if (!user.emailVerifyToken) {
             throw Boom.badRequest('Token not found').output;
         } else if (moment() > moment.unix(user.emailVerifyToken.exp)) {
             throw Boom.badRequest('Token expired').output;
         } else {
-            delete this.req.body.token;
             user.emailVerifyToken = undefined;
             user.emailConfirmed = true;
             return user.save();

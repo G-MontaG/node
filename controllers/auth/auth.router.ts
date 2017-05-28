@@ -7,6 +7,7 @@ import { loginHandler } from './login.controller';
 import { verifyEmailHandler } from './verify-email.controller';
 import { forgotEmailHandler } from './forgot-email.controller';
 import { forgotTokenHandler } from './forgot-token.controller';
+import { forgotPasswordHandler } from './forgot-password.controller';
 
 class AuthRouter {
     public routes = express.Router();
@@ -15,7 +16,8 @@ class AuthRouter {
         {type: 'post', route: '/login', handler: loginHandler},
         {type: 'post', route: '/verify-email', middleware: [checkTokenMiddleware], handler: verifyEmailHandler},
         {type: 'post', route: '/forgot/email', handler: forgotEmailHandler},
-        {type: 'post', route: '/forgot/token', handler: forgotTokenHandler}
+        {type: 'post', route: '/forgot/token', handler: forgotTokenHandler},
+        {type: 'post', route: '/forgot/password', middleware: [checkTokenMiddleware], handler: forgotPasswordHandler}
     ];
 
     constructor() {

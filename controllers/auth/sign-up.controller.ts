@@ -36,6 +36,7 @@ class SignUpController extends BaseController {
 
     private checkUserExist(user: IUserDocument) {
         if (user) {
+            delete this.req.body.password;
             throw Boom.conflict('Email is already in use').output;
         }
         const password = this.req.body.password;
