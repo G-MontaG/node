@@ -1,0 +1,54 @@
+version: "2"
+services:
+  nginx:
+    build: ./nginx
+    links:
+      - app1:app1
+      - app2:app2
+      - app3:app3
+    ports:
+      - "80:80"
+      - "3000:3000"
+      - "443:443"
+    volumes:
+      - /usr/local/etc/nginx/psw:/etc/nginx/psw
+      - /usr/local/etc/nginx/ssl:/etc/nginx/ssl
+    environment:
+      - DOMAIN_NAME=localhost
+  app1:
+    build: .
+    volumes:
+      - ./:/src
+    working_dir: /src
+    expose:
+      - "3001"
+    links:
+      - mongo
+    environment:
+      - SERVER_PORT=3001
+  app2:
+    build: .
+    volumes:
+      - ./:/src
+    working_dir: /src
+    expose:
+      - "3002"
+    links:
+      - mongo
+    environment:
+      - SERVER_PORT=3002
+  app3:
+    build: .
+    volumes:
+      - ./:/src
+    working_dir: /src
+    expose:
+      - "3003"
+    links:
+      - mongo
+    environment:
+      - SERVER_PORT=3003
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"

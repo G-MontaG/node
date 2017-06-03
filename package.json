@@ -51,6 +51,7 @@
   "devDependencies": {
     "@types/chai": "^3.5.2",
     "@types/mocha": "^2.2.41",
+    "artillery": "^1.6.0-2",
     "chai": "^4.0.0",
     "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
@@ -68,6 +69,7 @@
     "prod-stop": "pm2 stop ecosystem-prod.json",
     "prod-restart": "pm2 restart ecosystem-prod.json",
     "prod-delete": "pm2 delete ecosystem-prod.json",
+    "pm2-docker": "pm2-docker ecosystem-prod.json --only 'node'",
     "list": "pm2 list",
     "monit": "pm2 monit",
     "kill": "pm2 kill"

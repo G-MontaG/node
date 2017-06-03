@@ -1,0 +1,30 @@
+{
+  "config": {
+    "target": "http://localhost:3000",
+    "phases": [
+      {
+        "duration": "60",
+        "arrivalRate": "100"
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "flow": [
+        {
+          "post": {
+            "url": "/auth/login",
+            "json": {
+              "email": "arthur@mailinator.com",
+              "password": "test6"
+            },
+            "headers": {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
