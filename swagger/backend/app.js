@@ -6,7 +6,7 @@ let app = express();
 let bodyParser = require('body-parser');
 let compress = require('compression');
 let cors = require('cors');
-let port = process.env.PORT || 3001;
+let port = process.env.PORT || 4000;
 let hostname = process.env.HOST || "localhost";
 
 app.use(bodyParser.urlencoded({extended: true}));

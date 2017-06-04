@@ -1,5 +1,7 @@
-
 import nodemailer = require('nodemailer');
+import crypto = require('crypto');
+
+export const nodeID = crypto.randomBytes(32).toString('hex');
 
 export const passwordMinLength = 8;
 export const passwordMaxLength = 30;
