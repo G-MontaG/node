@@ -52,12 +52,15 @@
     "winston": "^2.3.1"
   },
   "scripts": {
-    "server": "nodemon --delay 2 --ext js --debug=5858 app.js",
     "build:node:dev": "docker build -t node-dev -f ./Dockerfile-dev . && docker tag node-dev gmontag/node:node-dev && docker push gmontag/node:node-dev",
+    "build:node:prod": "docker build -t node-prod -f ./Dockerfile-prod . && docker tag node-prod gmontag/node:node-prod && docker push gmontag/node:node-prod",
     "build:nginx:dev": "docker build -t nginx-dev ./nginx-dev/ && docker tag nginx-dev gmontag/nginx:nginx-dev && docker push gmontag/nginx:nginx-dev",
+    "build:nginx:prod": "docker build -t nginx-prod ./nginx-prod/ && docker tag nginx-prod gmontag/nginx:nginx-prod && docker push gmontag/nginx:nginx-prod",
     "build:swagger": "docker build -t swagger ./swagger && docker tag swagger gmontag/swagger:swagger && docker push gmontag/swagger:swagger",
-    "deploy:dev": "docker stack deploy -c docker-compose-dev.yml server",
-    "rm:dev": "docker stack rm server",
+    "deploy:dev": "docker stack deploy -c docker-compose-dev.yml server-dev",
+    "deploy:prod": "docker stack deploy -c docker-compose-prod.yml server-prod",
+    "rm:dev": "docker stack rm server-dev",
+    "rm:prod": "docker stack rm server-prod",
     "logs": "docker service logs -f"
   }
 }

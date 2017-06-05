@@ -1,17 +1,17 @@
 version: "3"
 services:
   nginx:
-    build: ./nginx-dev
-    image: gmontag/nginx:nginx-dev
+    build: ./nginx-prod
+    image: gmontag/nginx:nginx-prod
     links:
       - node
     ports:
       - "80:80"
-      - "3000:3000"
       - "443:443"
     volumes:
       - /usr/local/etc/nginx/psw:/etc/nginx/psw
       - /usr/local/etc/nginx/ssl:/etc/nginx/ssl
+    domainname: domain.com
     networks:
       - web
     deploy:
@@ -23,8 +23,8 @@ services:
       restart_policy:
         condition: on-failure
   node:
-    build: ./Dockerfile-dev
-    image: gmontag/node:node-dev
+    build: ./Dockerfile-prod
+    image: gmontag/node:node-prod
     links:
       - mongo
     volumes:
@@ -33,37 +33,15 @@ services:
       - ./node.env
     environment:
       - SERVER_PORT=3001
-      - NODE_ENV=development
-    ports:
-      - "5858:5858"
+      - NODE_ENV=production
     networks:
       - web
       - server
     deploy:
-      replicas: 1
+      replicas: 4
       resources:
         limits:
-          cpus: "0.7"
-          memory: 300M
-      restart_policy:
-        condition: on-failure
-      update_config:
-        parallelism: 2
-        delay: 10s
-  swagger:
-    build: ./swagger
-    image: gmontag/swagger:swagger
-    volumes:
-      - ./swagger/public:/swagger
-    ports:
-      - "3001:3001"
-    networks:
-      - web
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: "0.1"
+          cpus: "0.2"
           memory: 300M
       restart_policy:
         condition: on-failure
