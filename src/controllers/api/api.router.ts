@@ -32,7 +32,7 @@ class ApiRouter {
      *         description: test
      */
     private test(req, res, next) {
-        res.status(200).send({id: nodeID});
+        res.status(200).send({id: nodeID, test: 'test2222'});
     }
 }
 
