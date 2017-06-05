@@ -1,18 +1,16 @@
-FROM node:6
+FROM nginx
 
 MAINTAINER Arthur Osipenko
 
-# Provides cached layer for node_modules
-ADD ./backend/package.json /tmp/package.json
-RUN cd /tmp && npm install
-RUN mkdir -p /swagger && \
-    mkdir -p /swagger/backend && \
-    cp -a /tmp/node_modules /swagger/backend
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
 # Define working directory
-ADD . /swagger
+ADD ./public /swagger
 WORKDIR /swagger
 
-USER node
+# Append "daemon off;" to the beginning of the configuration
+# in order to avoid an exit of the container
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
-CMD ["node", "./backend/app.js"]
+# Define default command
+CMD service nginx start
