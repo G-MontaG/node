@@ -8,5 +8,8 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 # in order to avoid an exit of the container
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
+VOLUME /usr/local/etc/nginx/psw /etc/nginx/psw
+VOLUME /usr/local/etc/nginx/ssl /etc/nginx/ssl
+
 # Define default command
 CMD service nginx start

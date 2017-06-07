@@ -8,9 +8,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - /usr/local/etc/nginx/psw:/etc/nginx/psw
-      - /usr/local/etc/nginx/ssl:/etc/nginx/ssl
     domainname: domain.com
     networks:
       - web
@@ -27,8 +24,6 @@ services:
     image: gmontag/node:node-prod
     links:
       - mongo
-    volumes:
-      - ./compiled:/src/compiled
     env_file:
       - ./node.env
     environment:
