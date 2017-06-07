@@ -16,6 +16,7 @@ RUN cp -a /tmp/node_modules /src
 RUN npm i nodemon -g
 
 # Define working directory
+ADD ./compiled /src/compiled
 VOLUME ./compiled /src/compiled
 WORKDIR /src
 
