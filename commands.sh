@@ -45,6 +45,48 @@ d-build-swagger() {
   command docker push gmontag/${repo}:${tag}
 }
 
+d-container-ls() {
+  local format="table {{.ID}}\t{{.Names}}\t{{.Command}}\t{{.Ports}}\t{{.Status}}\t{{.Size}}\t{{.Image}}";
+
+  if [[ $1 ]]; then
+      command docker container ls --size --format "${format}" --filter $1
+  else
+      command docker container ls --size --format "${format}"
+  fi
+}
+
+d-container-diff() {
+  command docker container diff $1
+}
+
+d-container-inspect() {
+  if [[ $2 ]]; then
+      command docker container inspect --format $2 $1
+  else
+      command docker container inspect $1
+  fi
+}
+
+d-container-logs() {
+  if [[ $2 ]]; then
+      command docker container logs --timestamps --follow $1
+  else
+      command docker container logs --timestamps $1
+  fi
+}
+
+d-container-port() {
+  command docker container port $1 $2
+}
+
+d-container-stat() {
+  command docker container stats;
+}
+
+d-container-top() {
+  command docker container top $1 $2;
+}
+
 d-stack-deploy-dev() {
   local stack=${1:-server-dev};
 
@@ -99,6 +141,7 @@ d-inspect-json() {
 
 d-network-ls() {
   local format="table {{.ID}}\t{{.Name}}\t{{.Driver}}\t{{.Scope}}\t{{.IPv6}}\t{{.Internal}}";
+
   if [[ $1 ]]; then
       command sudo docker network ls --format "${format}" --filter $1
   else
@@ -106,4 +149,38 @@ d-network-ls() {
   fi
 }
 
+d-network-inspect() {
+  if [[ $2 ]]; then
+      command docker network inspect --format $2 $1
+  else
+      command docker network inspect $1
+  fi
+}
 
+d-node-ls() {
+  if [[ $1 ]]; then
+      command docker node ls --filter $1
+  else
+      command docker node ls
+  fi
+}
+
+d-node-inspect() {
+  if [[ $2 ]]; then
+      command docker node inspect --pretty --format $2 $1
+  else
+      command docker node inspect --pretty $1
+  fi
+}
+
+d-node-ps() {
+  if [[ $1 ]]; then
+      command docker node ps --filter $1
+  else
+      command docker node ps
+  fi
+}
+
+d-port() {
+  command docker port $1 $2
+}
