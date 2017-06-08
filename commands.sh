@@ -184,3 +184,11 @@ d-node-ps() {
 d-port() {
   command docker port $1 $2
 }
+
+d-rm() {
+  command docker rm $(docker ps -a -q)
+}
+
+d-rmi() {
+  command docker rmi $(docker images -q)
+}
