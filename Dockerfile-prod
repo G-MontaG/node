@@ -4,18 +4,18 @@ FROM node:6
 # RUN apt-get update && \
 #     apt-get -y install curl
 
-RUN mkdir -p /src/compiled
-RUN mkdir -p /src/uploads
-ADD ./index.js /src/index.js
+RUN mkdir -p /home/node/compiled
+RUN mkdir -p /home/node/uploads
+ADD ./index.js /home/node/index.js
 
 # Provides cached layer for node_modules
-ADD ./src/package.json /tmp/package.json
+ADD ./package.json /tmp/package.json
 RUN cd /tmp && npm install
-RUN cp -a /tmp/node_modules /src
+RUN cp -a /tmp/node_modules /home/node
 
 # Define working directory
-ADD ./compiled /src/compiled
-WORKDIR /src
+ADD ./compiled /home/node/compiled
+WORKDIR /home/node
 
 USER node
 

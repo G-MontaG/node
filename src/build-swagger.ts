@@ -20,9 +20,9 @@ const swaggerSpec = swaggerJSDoc({
         host: 'localhost:3000',
         basePath: '/',
     },
-    apis: ['./controllers/**/*.ts'],
+    apis: ['./compiled/controllers/**/*.js'],
 });
-fs.writeFile('../swagger/public/swagger.json', JSON.stringify(swaggerSpec), (err) => {
+fs.writeFile('./swagger/public/swagger.json', JSON.stringify(swaggerSpec), (err) => {
     if (err) {
         throw err;
     }

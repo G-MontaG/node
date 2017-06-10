@@ -4,22 +4,24 @@ FROM node:6
 # RUN apt-get update && \
 #     apt-get -y install curl
 
-RUN mkdir -p /src/compiled
-RUN mkdir -p /src/uploads
-ADD ./index.js /src/index.js
+RUN mkdir -p /home/node/compiled && \
+    mkdir -p /home/node/uploads
+
+ADD ./index.js /home/node/index.js
 
 # Provides cached layer for node_modules
-ADD ./src/package.json /tmp/package.json
-RUN cd /tmp && npm install
-RUN cp -a /tmp/node_modules /src
-
-RUN npm i nodemon -g
+ADD ./package.json /tmp/package.json
+RUN cd /tmp && npm install && \
+    cp -a /tmp/node_modules /home/node
 
 # Define working directory
-ADD ./compiled /src/compiled
-VOLUME ./compiled /src/compiled
-WORKDIR /src
+ADD ./compiled /home/node/compiled
+VOLUME ./compiled /home/node/compiled
+WORKDIR /home/node
+
+# install nodemon for live reloading
+RUN npm i nodemon
 
 USER node
 
-CMD ["nodemon", "-L", "--delay", "2", "--ext", "js", "--debug=5858", "./index.js"]
+CMD ["./node_modules/.bin/nodemon", "-L", "--delay", "2", "--ext", "js", "--debug=5858", "./index.js"]

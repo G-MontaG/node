@@ -50,3 +50,6 @@ atlassian-ide-plugin.xml
 ### Project
 node.env
 /compiled
+uploads/
+/.gitignore
+!/.gitignore

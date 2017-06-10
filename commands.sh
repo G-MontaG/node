@@ -1,5 +1,9 @@
 #!/bin/bash
 
+d-exec-bash() {
+ command docker exec -it $1 bash
+}
+
 d-build-node-dev() {
   local tag=${1:-node-dev};
   local repo=${2:-node};
