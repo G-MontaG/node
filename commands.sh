@@ -1,7 +1,11 @@
 #!/bin/bash
 
-d-exec-bash() {
- command docker exec -it $1 bash
+d-build() {
+  local file=${3:-./Dockerfile};
+  local path=${4:-.};
+  command docker build -t $2 -f ${file} ${path}
+  command docker tag $2 gmontag/$1:$2
+  command docker push gmontag/$1:$2
 }
 
 d-build-node-dev() {
@@ -50,12 +54,18 @@ d-build-swagger() {
 }
 
 d-container-ls() {
-  local format="table {{.ID}}\t{{.Names}}\t{{.Command}}\t{{.Ports}}\t{{.Status}}\t{{.Size}}\t{{.Image}}";
-
   if [[ $1 ]]; then
-      command docker container ls --size --format "${format}" --filter $1
+      command docker container ls --size --filter $1
   else
-      command docker container ls --size --format "${format}"
+      command docker container ls --size
+  fi
+}
+
+d-container-ls-all() {
+  if [[ $1 ]]; then
+      command docker container ls --size --all --filter $1
+  else
+      command docker container ls --size --all
   fi
 }
 
@@ -91,32 +101,28 @@ d-container-top() {
   command docker container top $1 $2;
 }
 
-d-stack-deploy-dev() {
-  local stack=${1:-server-dev};
-
-  command docker stack deploy -c docker-compose-dev.yml ${stack};
+d-container-exec-bash() {
+ command docker exec --interactive --tty $1 bash
 }
 
-d-stack-deploy-prod() {
-  local stack=${1:-server-prod};
-
-  command docker stack deploy -c docker-compose-prod.yml ${stack};
+d-image-history() {
+ command docker image history --human $1
 }
 
-d-stack-rm-dev() {
-  local stack=${1:-server-dev};
-
-  command docker stack rm ${stack};
+d-image-inspect() {
+  if [[ $2 ]]; then
+      command docker container inspect --format $2 $1
+  else
+      command docker container inspect $1
+  fi
 }
 
-d-stack-rm-prod() {
-  local stack=${1:-server-prod};
-
-  command docker stack rm ${stack};
-}
-
-d-service-logs() {
-  command docker service logs -f $1;
+d-images() {
+  if [[ $1 ]]; then
+      command docker images --filter $1
+  else
+      command docker images
+  fi
 }
 
 d-inspect-ip() {
@@ -196,3 +202,220 @@ d-rm() {
 d-rmi() {
   command docker rmi $(docker images -q)
 }
+
+d-ps() {
+  if [[ $1 ]]; then
+      command docker ps --size --filter $1
+  else
+      command docker ps --size
+  fi
+}
+
+d-ps-all() {
+  if [[ $1 ]]; then
+      command docker ps --all --size --filter $1
+  else
+      command docker ps --all --size
+  fi
+}
+
+d-search() {
+ command docker search $1
+}
+
+d-secret-create() {
+  command echo $2 | docker secret create $1 -
+}
+
+d-secret-create-by-file() {
+  command docker secret create $1 $2
+}
+
+d-secret-ls() {
+  if [[ $1 ]]; then
+      command docker secret ls --filter $1
+  else
+      command docker secret ls
+  fi
+}
+
+d-secret-inspect() {
+  if [[ $2 ]]; then
+      command docker secret inspect --format $2 $1
+  else
+      command docker secret inspect $1
+  fi
+}
+
+d-secret-rm() {
+  command docker secret rm $1
+}
+
+d-service-logs() {
+  command docker service logs --follow --timestamps $1;
+}
+
+d-service-inspect() {
+  if [[ $2 ]]; then
+      command docker service inspect --pretty --format $2 $1
+  else
+      command docker service inspect --pretty $1
+  fi
+}
+
+d-service-ls() {
+  if [[ $1 ]]; then
+      command docker service ls --filter $1
+  else
+      command docker service ls
+  fi
+}
+
+d-service-ps() {
+  if [[ $1 ]]; then
+      command docker service ps --filter $1
+  else
+      command docker service ps
+  fi
+}
+
+d-service-rm() {
+  command docker service rm $1
+}
+
+d-service-scale() {
+  command docker service scale $1
+}
+
+d-stack-deploy-dev() {
+  local stack=${1:-server-dev};
+
+  command docker stack deploy --compose-file docker-compose-dev.yml ${stack};
+}
+
+d-stack-deploy-prod() {
+  local stack=${1:-server-prod};
+
+  command docker stack deploy --compose-file docker-compose-prod.yml ${stack};
+}
+
+d-stack-rm() {
+  command docker stack rm $1;
+}
+
+d-stack-rm-dev() {
+  local stack=${1:-server-dev};
+
+  command docker stack rm ${stack};
+}
+
+d-stack-rm-prod() {
+  local stack=${1:-server-prod};
+
+  command docker stack rm ${stack};
+}
+
+d-stack-ps() {
+  if [[ $1 ]]; then
+      command docker stack ps --filter $1
+  else
+      command docker stack ps
+  fi
+}
+
+d-stack-service() {
+  if [[ $2 ]]; then
+      command docker stack services --filter $2 $1
+  else
+      command docker stack services $1
+  fi
+}
+
+d-stats() {
+  if [[ $2 ]]; then
+      command docker stats --format $2 $1
+  else
+      command docker stats $1
+  fi
+}
+
+d-stats-all() {
+  if [[ $2 ]]; then
+      command docker stats --all --format $2 $1
+  else
+      command docker stats --all $1
+  fi
+}
+
+d-swarm-init() {
+  command docker swarm init --advertise-addr $1
+}
+
+d-swarm-join-token() {
+  command docker swarm join-token $1
+}
+
+d-swarm-join() {
+  command docker swarm join --token $1 $2
+}
+
+d-swarm-leave() {
+  command docker swarm leave
+}
+
+d-swarm-unlock-key() {
+ command docker swarm unlock-key
+}
+
+d-swarm-update() {
+ command docker swarm update
+}
+
+d-system-df() {
+  command docker system df --verbose
+}
+
+d-system-events() {
+  if [[ $1 ]]; then
+      command docker system events --filter $1
+  else
+      command docker system events
+  fi
+}
+
+d-system-info() {
+ command docker system info
+}
+
+d-top() {
+  if [[ $2 ]]; then
+      command docker top $1 --size --filter $2
+  else
+      command docker top $1 --size
+  fi
+}
+
+d-version() {
+  command docker version
+}
+
+d-volume-inspect() {
+  if [[ $2 ]]; then
+      command docker volume inspect --format $2 $1
+  else
+      command docker volume inspect $1
+  fi
+}
+
+d-volume-ls() {
+  if [[ $1 ]]; then
+      command docker volume ls --filter $1
+  else
+      command docker volume ls
+  fi
+}
+
+d-volume-rm() {
+  command docker volume rm $1;
+}
+
