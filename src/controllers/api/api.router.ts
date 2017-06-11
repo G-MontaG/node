@@ -2,6 +2,7 @@ import _ = require('lodash');
 import express = require('express');
 import { IRouterConfiguration } from '../router-configuration.interface';
 import { checkTokenMiddleware } from '../../middlewares/check-token.middleware';
+import { nodeID } from '../../helpers/constants';
 
 class ApiRouter {
     public routes = express.Router();
@@ -31,7 +32,7 @@ class ApiRouter {
      *         description: test
      */
     private test(req, res, next) {
-        console.log(req.userId);
+        res.status(200).send({id: nodeID, test: 'test2222'});
     }
 }
 

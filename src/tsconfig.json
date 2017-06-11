@@ -4,19 +4,20 @@
     "module": "CommonJS",
     "moduleResolution": "Node",
     "sourceMap": false,
-    "removeComments": true,
+    "removeComments": false,
     "skipLibCheck": true,
     "alwaysStrict": true,
+    "outDir": "../compiled",
     "lib": [
       "es2016",
       "es2017"
     ],
     "typeRoots": [
-      "./node_modules/@types"
+      "../node_modules/@types"
     ]
   },
   "exclude": [
-    "node_modules",
+    "../node_modules",
     "typings/main",
     "typings/main.d.ts"
   ],

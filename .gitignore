@@ -48,9 +48,8 @@ sftp-config.json
 atlassian-ide-plugin.xml
 
 ### Project
-.env
-**/*.d.ts
-**/*.js
-
-!swagger/backend/app.js
-swagger/public/**
+node.env
+/compiled
+uploads/
+/.gitignore
+!/.gitignore

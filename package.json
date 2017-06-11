@@ -14,8 +14,8 @@
   "contributors": [],
   "main": "server.js",
   "engines": {
-    "node": ">=7.7.1",
-    "npm": ">=4.1.2"
+    "node": ">=8.1.0",
+    "npm": ">=5.0.3"
   },
   "repository": {
     "type": "git",
@@ -23,8 +23,6 @@
   },
   "dependencies": {
     "@types/express": "^4.0.35",
-    "@types/express-validator": "^2.20.33",
-    "@types/mime": "0.0.29",
     "@types/mongoose": "^4.7.13",
     "@types/node": "^7.0.22",
     "body-parser": "^1.17.2",
@@ -32,9 +30,7 @@
     "compression": "^1.6.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.3",
-    "dotenv": "^4.0.0",
     "express": "^4.15.3",
-    "express-validator": "^3.2.0",
     "helmet": "^3.6.1",
     "joi": "^10.5.0",
     "jsonwebtoken": "^7.4.1",
@@ -44,32 +40,16 @@
     "mongoose": "^4.10.2",
     "multer": "^1.3.0",
     "nodemailer": "^4.0.1",
+    "nodemon": "^1.11.0",
     "password-generator": "^2.1.0",
-    "pm2": "^2.4.6",
     "swagger-jsdoc": "^1.9.4"
   },
   "devDependencies": {
-    "@types/chai": "^3.5.2",
-    "@types/mocha": "^2.2.41",
-    "chai": "^4.0.0",
-    "mocha": "^3.4.2",
-    "nodemon": "^1.11.0",
     "tslint": "^5.3.2",
     "typescript": "^2.3.3",
     "winston": "^2.3.1"
   },
   "scripts": {
-    "server": "nodemon --delay 2 --ext js --inspect=5858 app.js",
-    "dev-start": "pm2 start ecosystem-dev.json --env development",
-    "dev-stop": "pm2 stop ecosystem-dev.json",
-    "dev-restart": "pm2 restart ecosystem-dev.json",
-    "dev-delete": "pm2 delete ecosystem-dev.json",
-    "prod-start": "pm2 start ecosystem-prod.json --env production",
-    "prod-stop": "pm2 stop ecosystem-prod.json",
-    "prod-restart": "pm2 restart ecosystem-prod.json",
-    "prod-delete": "pm2 delete ecosystem-prod.json",
-    "list": "pm2 list",
-    "monit": "pm2 monit",
-    "kill": "pm2 kill"
+    "swagger": "node ./compiled/build-swagger.js"
   }
 }

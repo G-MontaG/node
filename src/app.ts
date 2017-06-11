@@ -7,47 +7,15 @@ import cookieParser = require('cookie-parser');
 import compress = require('compression');
 import cors = require('cors');
 import helmet = require('helmet');
-import dotenv = require('dotenv');
-dotenv.config({path: '.env'});
 
 import winston = require('winston');
 
-import multer = require('multer');
-const upload = multer({dest: path.join(__dirname, 'uploads')});
-
-import expressValidator = require('express-validator');
+// import multer = require('multer');
+// const upload = multer({dest: path.join(__dirname, '../uploads')});
 
 import './db';
 import { apiRouter } from './controllers/api/api.router';
 import { authRouter } from './controllers/auth/auth.router';
-
-import swaggerJSDoc = require('swagger-jsdoc');
-const swaggerSpec = swaggerJSDoc({
-    swaggerDefinition: {
-        info: {
-            title: 'Node Swagger API',
-            version: '1.0.0',
-            description: 'Node swagger',
-            contacts: {
-                name: 'Node',
-                url: 'https://github.com/G-MontaG/node',
-                email: 'arthur.osipenko@gmail.com'
-            },
-            license: {
-                name: 'MIT',
-                url: 'https://github.com/G-MontaG/node/blob/master/LICENSE'
-            }
-        },
-        host: 'localhost:3000',
-        basePath: '/',
-    },
-    apis: ['./controllers/**/*.ts'],
-});
-fs.writeFile('./swagger/public/swagger.json', JSON.stringify(swaggerSpec), (err) => {
-    if (err) {
-        throw err;
-    }
-});
 
 const publicDir = path.join(__dirname, 'public');
 

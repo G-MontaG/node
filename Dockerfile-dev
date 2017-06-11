@@ -1,0 +1,27 @@
+FROM node:6
+
+# Create app directory
+# RUN apt-get update && \
+#     apt-get -y install curl
+
+RUN mkdir -p /home/node/compiled && \
+    mkdir -p /home/node/uploads
+
+ADD ./index.js /home/node/index.js
+
+# Provides cached layer for node_modules
+ADD ./package.json /tmp/package.json
+RUN cd /tmp && npm install && \
+    cp -a /tmp/node_modules /home/node
+
+# Define working directory
+ADD ./compiled /home/node/compiled
+VOLUME ./compiled /home/node/compiled
+WORKDIR /home/node
+
+# install nodemon for live reloading
+RUN npm i nodemon
+
+USER node
+
+CMD ["./node_modules/.bin/nodemon", "-L", "--delay", "2", "--ext", "js", "--debug=5858", "./index.js"]
