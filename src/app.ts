@@ -9,6 +9,7 @@ import cors = require('cors');
 import helmet = require('helmet');
 
 import winston = require('winston');
+import Raven = require('raven');
 
 // import multer = require('multer');
 // const upload = multer({dest: path.join(__dirname, '../uploads')});
@@ -52,6 +53,13 @@ class Server {
     }
 
     private configureErrorHandler() {
+        if (process.env.NODE_ENV === 'production') {
+            Raven.config('https://256c017ff80b49059d7e3e67c562ea8a:4220dacbc2c0425aa3f836b802631467@sentry.io/189328')
+                .install();
+            this.app.use(Raven.requestHandler());
+            this.app.use(Raven.errorHandler());
+        }
+
         this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
             winston.log('error', `${req.method} ${req.path} [${err.status}] - ${err.message}`);
             winston.log('error', err.stack);

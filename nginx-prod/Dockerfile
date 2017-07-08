@@ -13,8 +13,8 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 RUN ln -s /etc/nginx/sites-available/domain.com/nginx.conf /etc/nginx/sites-enabled/domain.com/nginx.conf
 
-ADD /usr/local/etc/nginx/psw /etc/nginx/psw
-ADD /usr/local/etc/nginx/ssl /etc/nginx/ssl
+# ADD /usr/local/etc/nginx/psw /etc/nginx/psw
+# ADD /usr/local/etc/nginx/ssl /etc/nginx/ssl
 
 # Define default command
 CMD service nginx start

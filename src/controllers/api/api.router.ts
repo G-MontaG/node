@@ -32,6 +32,7 @@ class ApiRouter {
      *         description: test
      */
     private test(req, res, next) {
+        // throw new Error('booom');
         res.status(200).send({id: nodeID, test: 'test2222'});
     }
 }

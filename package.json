@@ -42,6 +42,7 @@
     "nodemailer": "^4.0.1",
     "nodemon": "^1.11.0",
     "password-generator": "^2.1.0",
+    "raven": "^2.1.0",
     "swagger-jsdoc": "^1.9.4"
   },
   "devDependencies": {

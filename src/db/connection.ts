@@ -8,6 +8,7 @@ class MongodbConnection {
     private connectionUrl: string;
 
     private readonly connectionOptions = {
+        useMongoClient: true,
         server: {
             auto_reconnect: true,
             socketOptions: {keepAlive: 30000, connectTimeoutMS: 0, socketTimeoutMS: 0}
