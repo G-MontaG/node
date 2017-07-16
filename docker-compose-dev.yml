@@ -70,8 +70,12 @@ services:
         delay: 10s
   mongo:
     image: mongo
+    volumes:
+      - /Users/arthur/data/db/:/data/db
     networks:
       - server
+    ports:
+      - "27017:27017"
     deploy:
       replicas: 1
       resources:
