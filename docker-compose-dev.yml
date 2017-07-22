@@ -30,6 +30,8 @@ services:
     environment:
       - SERVER_PORT=3001
       - NODE_ENV=development
+    volumes:
+      - ./compiled:/home/node/compiled
     ports:
       - "5858:5858"
     networks:

@@ -2,12 +2,14 @@ import _ = require('lodash');
 import express = require('express');
 import { IRouterConfiguration } from '../router-configuration.interface';
 import { checkTokenMiddleware } from '../../middlewares/check-token.middleware';
-import { nodeID } from '../../helpers/constants';
+import { userUpdateHandler } from './user/update.controller';
+import { userGetByIdHandler } from './user/getById.controller';
 
 class ApiRouter {
     public routes = express.Router();
     private readonly configurations: IRouterConfiguration[] = [
-        {type: 'get', route: '/test', middleware: [checkTokenMiddleware], handler: this.test}
+        {type: 'get', route: '/user', middleware: [checkTokenMiddleware], handler: userGetByIdHandler},
+        {type: 'put', route: '/user', middleware: [checkTokenMiddleware], handler: userUpdateHandler}
     ];
 
     constructor() {
@@ -19,22 +21,12 @@ class ApiRouter {
             }
         });
     }
-
-    /**
-     * @swagger
-     * /api/test:
-     *   get:
-     *     description: test the application
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       200:
-     *         description: test
-     */
-    private test(req, res, next) {
-        // throw new Error('booom');
-        res.status(200).send({id: nodeID, test: 'test2222'});
-    }
 }
 
+/**
+ * @swagger
+ * tags:
+ *   name: API
+ *   description: 'Application API'
+ */
 export const apiRouter = new ApiRouter();

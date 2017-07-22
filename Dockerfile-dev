@@ -16,7 +16,6 @@ RUN cd /tmp && npm install && \
 
 # Define working directory
 ADD ./compiled /home/node/compiled
-VOLUME ./compiled /home/node/compiled
 WORKDIR /home/node
 
 # install nodemon for live reloading
