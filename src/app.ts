@@ -15,6 +15,7 @@ import Raven = require('raven');
 // const upload = multer({dest: path.join(__dirname, '../uploads')});
 
 import './db';
+import './models';
 import { apiRouter } from './controllers/api/api.router';
 import { authRouter } from './controllers/auth/auth.router';
 

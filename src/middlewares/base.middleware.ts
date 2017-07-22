@@ -1,7 +1,4 @@
 import express = require('express');
-import jwt = require('jsonwebtoken');
-import Boom = require('boom');
-import Joi = require('joi');
 
 export abstract class BaseMiddleware {
     protected req: express.Request | any;

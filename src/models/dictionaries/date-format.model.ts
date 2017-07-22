@@ -19,4 +19,4 @@ dateFormatSchema.statics.findByValue = (value: string, cb: () => void) => {
     return DateFormat.findOne({ value }, 'value label', cb);
 };
 
-export const DateFormat = mongoose.model('DateFormat', dateFormatSchema) as IDateFormatModel;
+export const DateFormat = mongoose.model('Date-Format', dateFormatSchema) as IDateFormatModel;

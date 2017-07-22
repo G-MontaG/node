@@ -19,4 +19,4 @@ accountTypeSchema.statics.findByValue = (value: string, cb: () => void) => {
     return AccountType.findOne({ value }, 'value label', cb);
 };
 
-export const AccountType = mongoose.model('AccountType', accountTypeSchema) as IAccountTypeModel;
+export const AccountType = mongoose.model('Account-Type', accountTypeSchema) as IAccountTypeModel;

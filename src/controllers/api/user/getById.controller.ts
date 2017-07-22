@@ -7,13 +7,16 @@ class UserGetByIdController extends BaseController {
     protected req: IRequestWithUserId;
 
     public handler() {
-        User.findById(this.req.userId, 'emailConfirmed profile').lean().exec()
+        User.findById(this.req.userId, 'email emailConfirmed profile').lean().exec()
             .then(this.response.bind(this))
             .catch(this.errorHandler.bind(this));
     }
 
     private response(user: IUserDocument) {
-        this.res.status(200).send({emailConfirmed: user.emailConfirmed, ...user.profile});
+        this.res.status(200).send({
+            email: user.email,
+            emailConfirmed: user.emailConfirmed,
+            ...user.profile});
     }
 }
 
@@ -23,6 +26,8 @@ class UserGetByIdController extends BaseController {
  *   UserResponse:
  *     type: 'object'
  *     properties:
+ *       email:
+ *         type: 'string'
  *       emailConfirmed:
  *         type: 'boolean'
  *       first_name:
@@ -34,6 +39,7 @@ class UserGetByIdController extends BaseController {
  *       language:
  *         type: 'string'
  *     required:
+ *       - email
  *       - emailConfirmed
  *       - first_name
  *       - last_name

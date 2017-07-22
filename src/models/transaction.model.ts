@@ -9,10 +9,10 @@ const transactionSchema = new Schema({
     payee: {type: String},
     category: {type: String},
     memo: {type: String},
-    flow: { type: {
+    flow: {
         value: {type: Number, required: true},
         type: {type: String, required: true}
-    }, required: true}
+    }
 });
 
 export interface ITransactionDocument extends mongoose.Document {

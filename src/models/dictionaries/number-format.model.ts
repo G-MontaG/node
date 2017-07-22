@@ -19,4 +19,4 @@ numberFormatSchema.statics.findByValue = (value: string, cb: () => void) => {
     return NumberFormat.findOne({ value }, 'value label', cb);
 };
 
-export const NumberFormat = mongoose.model('NumberFormat', numberFormatSchema) as INumberFormatModel;
+export const NumberFormat = mongoose.model('Number-Format', numberFormatSchema) as INumberFormatModel;

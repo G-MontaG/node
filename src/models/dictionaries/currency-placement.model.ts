@@ -20,6 +20,6 @@ currencyPlacementSchema.statics.findByValue = (value: string, cb: () => void) =>
 };
 
 export const CurrencyPlacement = mongoose.model(
-    'CurrencyPlacement',
+    'Currency-Placement',
     currencyPlacementSchema
 ) as ICurrencyPlacementModel;

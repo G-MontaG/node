@@ -23,13 +23,16 @@ class UserUpdateController extends BaseController {
 
         User.findByIdAndUpdate(this.req.userId,
             {profile: {...this.req.body}},
-            {new: true, select: 'emailConfirmed profile'}).lean().exec()
+            {new: true, select: 'email emailConfirmed profile'}).lean().exec()
             .then(this.response.bind(this))
             .catch(this.errorHandler.bind(this));
     }
 
     private response(user) {
-        this.res.status(200).send({emailConfirmed: user.emailConfirmed, ...user.profile});
+        this.res.status(200).send({
+            email: user.email,
+            emailConfirmed: user.emailConfirmed,
+            ...user.profile});
     }
 }
 

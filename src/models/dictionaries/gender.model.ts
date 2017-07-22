@@ -19,4 +19,4 @@ genderSchema.statics.findByValue = (value: string, cb: () => void) => {
     return Gender.findOne({ value }, 'value label', cb);
 };
 
-export const Gender = mongoose.model('Language', genderSchema) as IGenderModel;
+export const Gender = mongoose.model('Gender', genderSchema) as IGenderModel;
