@@ -20,26 +20,6 @@ class UserGetByIdController extends BaseController {
 /**
  * @swagger
  * definitions:
- *   UserUpdate:
- *     type: 'object'
- *     properties:
- *       first_name:
- *         type: 'string'
- *         minLength: 2
- *         maxLength: 100
- *       last_name:
- *         type: 'string'
- *         minLength: 2
- *         maxLength: 100
- *       gender:
- *         type: 'string'
- *       language:
- *          type: 'string'
- */
-
-/**
- * @swagger
- * definitions:
  *   UserResponse:
  *     type: 'object'
  *     properties:
@@ -54,6 +34,7 @@ class UserGetByIdController extends BaseController {
  *       language:
  *         type: 'string'
  *     required:
+ *       - emailConfirmed
  *       - first_name
  *       - last_name
  *       - gender
@@ -71,12 +52,6 @@ class UserGetByIdController extends BaseController {
  *       - application/json
  *     produces:
  *       - application/json
- *     parameters:
- *       - in: path
- *         name: userId
- *         type: integer
- *         required: true
- *         description: Numeric ID of the user to update.
  *     responses:
  *       200:
  *         description: 'User find successful'

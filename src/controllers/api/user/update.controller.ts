@@ -23,13 +23,13 @@ class UserUpdateController extends BaseController {
 
         User.findByIdAndUpdate(this.req.userId,
             {profile: {...this.req.body}},
-            {select: 'profile'}).lean().exec()
+            {new: true, select: 'emailConfirmed profile'}).lean().exec()
             .then(this.response.bind(this))
             .catch(this.errorHandler.bind(this));
     }
 
     private response(user) {
-        this.res.status(200).send({message: 'User is updated', user: {...user.profile}});
+        this.res.status(200).send({emailConfirmed: user.emailConfirmed, ...user.profile});
     }
 }
 
@@ -71,11 +71,6 @@ class UserUpdateController extends BaseController {
  *         required: true
  *         schema:
  *           $ref: '#/definitions/UserUpdate'
- *       - in: path
- *         name: userId
- *         type: integer
- *         required: true
- *         description: Numeric ID of the user to update.
  *     responses:
  *       200:
  *         description: 'User update successful'
