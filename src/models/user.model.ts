@@ -31,8 +31,8 @@ const userSchema = new Schema({
         exp: {type: Number}
     },
     profile: {
-        first_name: {type: String, default: ''},
-        last_name: {type: String, default: ''},
+        firstName: {type: String, default: ''},
+        lastName: {type: String, default: ''},
         gender: {type: String, default: ''},
         language: {type: String, default: ''},
         picture: {
@@ -61,8 +61,8 @@ export interface IUserDocument extends mongoose.Document {
         exp: number
     };
     profile: {
-        first_name: string,
-        last_name: string,
+        firstName: string,
+        lastName: string,
         gender: string,
         language: string,
         picture: {

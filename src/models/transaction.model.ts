@@ -1,9 +1,9 @@
-import crypto = require('crypto');
 import mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const transactionSchema = new Schema({
-    account_id: {type: Schema.Types.ObjectId, required: true, index: true},
+    userId: {type: Schema.Types.ObjectId, required: true, index: true},
+    accountId: {type: Schema.Types.ObjectId, required: true, index: true},
     label: {type: String},
     date: {type: Date, required: true},
     payee: {type: String},

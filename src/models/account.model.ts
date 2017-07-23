@@ -1,14 +1,14 @@
-import crypto = require('crypto');
 import mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const accountSchema = new Schema({
-    budget_id: {type: Schema.Types.ObjectId, required: true, index: true},
+    userId: {type: Schema.Types.ObjectId, required: true, index: true},
+    budgetId: {type: Schema.Types.ObjectId, required: true, index: true},
     name: {type: String, required: true},
     description: {type: String, required: true},
     type: {type: String, required: true, default: '1'},
     balance: {type: Number, required: true, default: 0},
-    bank_connection: {type: Object, default: {}}
+    bankConnection: {type: Object, default: {}}
 });
 
 export interface IAccountDocument extends mongoose.Document {

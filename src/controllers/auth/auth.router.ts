@@ -1,4 +1,3 @@
-import _ = require('lodash');
 import express = require('express');
 import { IRouterConfiguration } from '../router-configuration.interface';
 import { checkTokenMiddleware } from '../../middlewares/check-token.middleware';
@@ -23,13 +22,19 @@ class AuthRouter {
     ];
 
     constructor() {
-        _.forEach(this.configurations, (c) => {
-            if (c.middleware) {
-                this.routes[c.type](c.route, c.middleware, c.handler);
+        const configurationsLength = this.configurations.length - 1;
+        for (let i = 0; i < configurationsLength; i++) {
+            if (this.configurations[i].middleware) {
+                this.routes[this.configurations[i].type](
+                    this.configurations[i].route,
+                    this.configurations[i].middleware,
+                    this.configurations[i].handler);
             } else {
-                this.routes[c.type](c.route, c.handler);
+                this.routes[this.configurations[i].type](
+                    this.configurations[i].route,
+                    this.configurations[i].handler);
             }
-        });
+        }
     }
 }
 

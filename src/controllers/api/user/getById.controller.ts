@@ -30,9 +30,9 @@ class UserGetByIdController extends BaseController {
  *         type: 'string'
  *       emailConfirmed:
  *         type: 'boolean'
- *       first_name:
+ *       firstName:
  *         type: 'string'
- *       last_name:
+ *       lastName:
  *         type: 'string'
  *       gender:
  *         type: 'string'
@@ -41,8 +41,8 @@ class UserGetByIdController extends BaseController {
  *     required:
  *       - email
  *       - emailConfirmed
- *       - first_name
- *       - last_name
+ *       - firstName
+ *       - lastName
  *       - gender
  *       - language
  */

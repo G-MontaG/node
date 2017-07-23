@@ -34,7 +34,6 @@
     "helmet": "^3.8.0",
     "joi": "^10.6.0",
     "jsonwebtoken": "^7.4.1",
-    "lodash": "^4.17.4",
     "mime": "^1.3.6",
     "moment": "^2.18.1",
     "mongoose": "^4.11.3",

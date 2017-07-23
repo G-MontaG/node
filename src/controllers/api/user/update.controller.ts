@@ -8,8 +8,8 @@ class UserUpdateController extends BaseController {
     protected req: IRequestWithUserId;
 
     protected schema = Joi.object().keys({
-        first_name: Joi.string().min(2).max(100).truncate(),
-        last_name: Joi.string().min(2).max(100).truncate(),
+        firstName: Joi.string().min(2).max(100).truncate(),
+        lastName: Joi.string().min(2).max(100).truncate(),
         gender: Joi.string().valid('male', 'female'),
         language: Joi.string()
     });
@@ -42,11 +42,11 @@ class UserUpdateController extends BaseController {
  *   UserUpdate:
  *     type: 'object'
  *     properties:
- *       first_name:
+ *       firstName:
  *         type: 'string'
  *         minLength: 2
  *         maxLength: 100
- *       last_name:
+ *       lastName:
  *         type: 'string'
  *         minLength: 2
  *         maxLength: 100
