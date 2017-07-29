@@ -1,10 +1,10 @@
-import _ = require('lodash');
 import express = require('express');
 import { IRouterConfiguration } from '../router-configuration.interface';
 import { checkTokenMiddleware } from '../../middlewares/check-token.middleware';
 import { userUpdateHandler } from './user/update.controller';
 import { userGetByIdHandler } from './user/getById.controller';
 import { budgetGetByIdHandler } from './budget/getById.controller';
+import { budgetListHandler } from './budget/list.controller';
 
 class ApiRouter {
     public routes = express.Router();
@@ -12,6 +12,7 @@ class ApiRouter {
         {type: 'get', route: '/user', middleware: [checkTokenMiddleware], handler: userGetByIdHandler},
         {type: 'put', route: '/user', middleware: [checkTokenMiddleware], handler: userUpdateHandler},
 
+        {type: 'get', route: '/budgets', middleware: [checkTokenMiddleware], handler: budgetListHandler},
         {type: 'get', route: '/budgets/:budgetId', middleware: [checkTokenMiddleware], handler: budgetGetByIdHandler},
     ];
 

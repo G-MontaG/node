@@ -1,5 +1,6 @@
 import express = require('express');
 import Boom = require('boom');
+import Joi = require('joi');
 import { BaseController } from '../../base.controller';
 import { IRequestWithUserId } from '../../request.interface';
 import { Budget, IBudgetDocument } from '../../../models/budget.model';
@@ -7,15 +8,19 @@ import { Budget, IBudgetDocument } from '../../../models/budget.model';
 class BudgetGetByIdController extends BaseController {
     protected req: IRequestWithUserId;
 
+    protected schema = Joi.object().keys({
+        budgetId: Joi.string().length(24),
+    }).requiredKeys(['budgetId']);
+
     public handler() {
-        if (!this.req.params.budgetId || typeof this.req.params.budgetId !== 'string') {
-            this.errorHandler('There is no budget ID parameter provided');
+        const result = this.validate(this.req.params);
+        if (result) {
+            this.errorHandler(result);
             return null;
         }
 
         Budget.findOne({_id: this.req.params.budgetId, userId: this.req.userId},
             '-_id -userId').lean().exec()
-            .then()
             .then(this.response.bind(this))
             .catch(this.errorHandler.bind(this));
     }

@@ -18,8 +18,8 @@ export abstract class BaseController {
 
     public abstract handler();
 
-    protected validate() {
-        return Joi.validate(this.req.body, this.schema, (validationError, value) => {
+    protected validate(data) {
+        return Joi.validate(data, this.schema, (validationError, value) => {
             if (!validationError) {
                 return null;
             }

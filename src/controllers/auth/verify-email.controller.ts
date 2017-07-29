@@ -15,7 +15,7 @@ class VerifyEmailController extends BaseController {
     }).requiredKeys(['token']);
 
     public handler() {
-        const result = this.validate();
+        const result = this.validate(this.req.body);
         if (result) {
             this.errorHandler(result);
             return null;
